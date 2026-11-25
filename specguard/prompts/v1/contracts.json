@@ -1,0 +1,2213 @@
+{
+  "version": "v1",
+  "$defs": {
+    "Assessment": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/CriterionAssessment"
+          },
+          "title": "Criteria",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Candidate"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "criteria",
+        "findings",
+        "uncertainty"
+      ],
+      "title": "Assessment",
+      "type": "object"
+    },
+    "BenchmarkInput": {
+      "additionalProperties": false,
+      "properties": {
+        "purpose": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Purpose",
+          "type": "string"
+        },
+        "cases": {
+          "default": 2,
+          "maximum": 12,
+          "minimum": 2,
+          "title": "Cases",
+          "type": "integer"
+        },
+        "topics": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Topics",
+          "type": "array"
+        }
+      },
+      "required": [
+        "purpose"
+      ],
+      "title": "BenchmarkInput",
+      "type": "object"
+    },
+    "BenchmarkResult": {
+      "additionalProperties": false,
+      "properties": {
+        "documents": {
+          "items": {
+            "$ref": "#/$defs/SyntheticDocument"
+          },
+          "maxItems": 12,
+          "minItems": 2,
+          "title": "Documents",
+          "type": "array"
+        },
+        "case_labels": {
+          "items": {
+            "$ref": "#/$defs/CaseClassification"
+          },
+          "title": "Case Labels",
+          "type": "array"
+        },
+        "candidate_labels": {
+          "items": {
+            "$ref": "#/$defs/ProposedLabel"
+          },
+          "minItems": 1,
+          "title": "Candidate Labels",
+          "type": "array"
+        },
+        "requires_review": {
+          "const": true,
+          "title": "Requires Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "documents",
+        "case_labels",
+        "candidate_labels",
+        "requires_review"
+      ],
+      "title": "BenchmarkResult",
+      "type": "object"
+    },
+    "Block": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Block Id",
+          "type": "string"
+        },
+        "text": {
+          "maxLength": 100000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        }
+      },
+      "required": [
+        "document_id",
+        "block_id",
+        "text"
+      ],
+      "title": "Block",
+      "type": "object"
+    },
+    "Candidate": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Description",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "informational"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "requires_clarification",
+            "context_dependent"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "criterion": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Criterion"
+        },
+        "requirement_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "impact": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Impact",
+          "type": "string"
+        },
+        "recommendation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "conflict_scenario": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conflict Scenario"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "severity",
+        "status",
+        "requirement_ids",
+        "evidence",
+        "impact",
+        "recommendation",
+        "uncertainty"
+      ],
+      "title": "Candidate",
+      "type": "object"
+    },
+    "CaseClassification": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "clean": {
+          "title": "Clean",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id",
+        "clean"
+      ],
+      "title": "CaseClassification",
+      "type": "object"
+    },
+    "Change": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "added",
+            "removed",
+            "changed",
+            "contradiction",
+            "missing_interface",
+            "conflicting_constraint",
+            "potentially_resolved",
+            "remaining_defect",
+            "new_defect",
+            "match"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "alignment": {
+          "enum": [
+            "exact",
+            "semantic",
+            "uncertain"
+          ],
+          "title": "Alignment",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Description",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "requirement_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "related_finding_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Related Finding Ids",
+          "type": "array"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "alignment",
+        "description",
+        "evidence",
+        "requirement_ids",
+        "related_finding_ids",
+        "uncertainty"
+      ],
+      "title": "Change",
+      "type": "object"
+    },
+    "CompareInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/KnownFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "primary_document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Primary Document Id",
+          "type": "string"
+        },
+        "supplementary_document_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Supplementary Document Ids",
+          "type": "array"
+        },
+        "purpose": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Purpose",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blocks",
+        "primary_document_id",
+        "supplementary_document_ids",
+        "purpose"
+      ],
+      "title": "CompareInput",
+      "type": "object"
+    },
+    "CompareResult": {
+      "additionalProperties": false,
+      "properties": {
+        "relationship": {
+          "enum": [
+            "complementary",
+            "conflicting",
+            "versions",
+            "uncertain"
+          ],
+          "title": "Relationship",
+          "type": "string"
+        },
+        "changes": {
+          "items": {
+            "$ref": "#/$defs/Change"
+          },
+          "title": "Changes",
+          "type": "array"
+        },
+        "questions": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "relationship",
+        "changes",
+        "questions"
+      ],
+      "title": "CompareResult",
+      "type": "object"
+    },
+    "CopilotInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/KnownFinding"
+          },
+          "title": "Findings",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "question": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Question",
+          "type": "string"
+        },
+        "selected_requirement_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Requirement Id"
+        },
+        "selected_finding_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Selected Finding Id"
+        },
+        "history": {
+          "items": {
+            "$ref": "#/$defs/HistoryItem"
+          },
+          "maxItems": 12,
+          "title": "History",
+          "type": "array"
+        },
+        "supported_actions": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Supported Actions",
+          "type": "array"
+        },
+        "complex": {
+          "default": false,
+          "title": "Complex",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "blocks",
+        "question"
+      ],
+      "title": "CopilotInput",
+      "type": "object"
+    },
+    "CopilotResult": {
+      "additionalProperties": false,
+      "properties": {
+        "answer": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Answer",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "related_finding_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Related Finding Ids",
+          "type": "array"
+        },
+        "questions": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Questions",
+          "type": "array"
+        },
+        "actions": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Actions",
+          "type": "array"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "followups": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Followups",
+          "type": "array"
+        },
+        "insufficient_evidence": {
+          "title": "Insufficient Evidence",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "answer",
+        "evidence",
+        "related_finding_ids",
+        "questions",
+        "actions",
+        "uncertainty",
+        "followups",
+        "insufficient_evidence"
+      ],
+      "title": "CopilotResult",
+      "type": "object"
+    },
+    "CriterionAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion": {
+          "enum": [
+            "necessity",
+            "appropriateness",
+            "unambiguity",
+            "completeness",
+            "singularity",
+            "feasibility",
+            "verifiability",
+            "correctness",
+            "conformance"
+          ],
+          "title": "Criterion",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "valid",
+            "confirmed_defect",
+            "requires_clarification",
+            "context_dependent",
+            "insufficient_evidence",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "explanation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion",
+        "status",
+        "explanation"
+      ],
+      "title": "CriterionAssessment",
+      "type": "object"
+    },
+    "CriticInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/ReviewCandidate"
+          },
+          "minItems": 1,
+          "title": "Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks",
+        "requirements",
+        "candidates"
+      ],
+      "title": "CriticInput",
+      "type": "object"
+    },
+    "CriticResult": {
+      "additionalProperties": false,
+      "properties": {
+        "verdicts": {
+          "items": {
+            "$ref": "#/$defs/Verdict"
+          },
+          "title": "Verdicts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "verdicts"
+      ],
+      "title": "CriticResult",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Block Id",
+          "type": "string"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote"
+        },
+        "kind": {
+          "default": "quote",
+          "enum": [
+            "quote",
+            "absence"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "document_id",
+        "block_id",
+        "quote"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "ExtractInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SourceMetadata"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "document_name": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Document Name"
+        },
+        "existing_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Existing Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks"
+      ],
+      "title": "ExtractInput",
+      "type": "object"
+    },
+    "Extracted": {
+      "additionalProperties": false,
+      "properties": {
+        "original_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Original Id"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "summary": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Summary",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "functional",
+            "non_functional",
+            "business_rule",
+            "data",
+            "api",
+            "integration",
+            "acceptance",
+            "process"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "section": {
+          "title": "Section",
+          "type": "string"
+        },
+        "relationships": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Relationships",
+          "type": "array"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "original_id",
+        "evidence",
+        "summary",
+        "kind",
+        "section",
+        "relationships",
+        "uncertainty"
+      ],
+      "title": "Extracted",
+      "type": "object"
+    },
+    "GlobalInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "candidates": {
+          "items": {
+            "$ref": "#/$defs/Candidate"
+          },
+          "title": "Candidates",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks",
+        "requirements"
+      ],
+      "title": "GlobalInput",
+      "type": "object"
+    },
+    "GlobalResult": {
+      "additionalProperties": false,
+      "properties": {
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/Candidate"
+          },
+          "title": "Findings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "findings"
+      ],
+      "title": "GlobalResult",
+      "type": "object"
+    },
+    "HistoryItem": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "enum": [
+            "user",
+            "assistant"
+          ],
+          "title": "Role",
+          "type": "string"
+        },
+        "content": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Content",
+          "type": "string"
+        }
+      },
+      "required": [
+        "role",
+        "content"
+      ],
+      "title": "HistoryItem",
+      "type": "object"
+    },
+    "IndividualInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "criteria": {
+          "items": {
+            "enum": [
+              "necessity",
+              "appropriateness",
+              "unambiguity",
+              "completeness",
+              "singularity",
+              "feasibility",
+              "verifiability",
+              "correctness",
+              "conformance"
+            ],
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Criteria",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks",
+        "requirements"
+      ],
+      "title": "IndividualInput",
+      "type": "object"
+    },
+    "IndividualResult": {
+      "additionalProperties": false,
+      "properties": {
+        "assessments": {
+          "items": {
+            "$ref": "#/$defs/Assessment"
+          },
+          "title": "Assessments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "assessments"
+      ],
+      "title": "IndividualResult",
+      "type": "object"
+    },
+    "Inventory": {
+      "additionalProperties": false,
+      "properties": {
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/Extracted"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "unclassified": {
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "title": "Unclassified",
+          "type": "array"
+        }
+      },
+      "required": [
+        "requirements",
+        "unclassified"
+      ],
+      "title": "Inventory",
+      "type": "object"
+    },
+    "KnownFinding": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Description",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "informational"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "requires_clarification",
+            "context_dependent"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "criterion": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Criterion"
+        },
+        "requirement_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "impact": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Impact",
+          "type": "string"
+        },
+        "recommendation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "conflict_scenario": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conflict Scenario"
+        },
+        "finding_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Finding Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "severity",
+        "status",
+        "requirement_ids",
+        "evidence",
+        "impact",
+        "recommendation",
+        "uncertainty",
+        "finding_id"
+      ],
+      "title": "KnownFinding",
+      "type": "object"
+    },
+    "ProposedLabel": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "explanation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Explanation",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        }
+      },
+      "required": [
+        "kind",
+        "explanation",
+        "evidence"
+      ],
+      "title": "ProposedLabel",
+      "type": "object"
+    },
+    "Ref": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "block_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Block Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_id",
+        "block_id"
+      ],
+      "title": "Ref",
+      "type": "object"
+    },
+    "RegistryEntry": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "original_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Id"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Summary"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "relationships": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Relationships",
+          "type": "array"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "evidence"
+      ],
+      "title": "RegistryEntry",
+      "type": "object"
+    },
+    "ReviewCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Kind",
+          "type": "string"
+        },
+        "title": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Description",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "informational"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "requires_clarification",
+            "context_dependent"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "criterion": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Criterion"
+        },
+        "requirement_ids": {
+          "items": {
+            "maxLength": 200,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "impact": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Impact",
+          "type": "string"
+        },
+        "recommendation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "conflict_scenario": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conflict Scenario"
+        },
+        "candidate_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Candidate Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "severity",
+        "status",
+        "requirement_ids",
+        "evidence",
+        "impact",
+        "recommendation",
+        "uncertainty",
+        "candidate_id"
+      ],
+      "title": "ReviewCandidate",
+      "type": "object"
+    },
+    "RevisionInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/KnownFinding"
+          },
+          "minItems": 1,
+          "title": "Findings",
+          "type": "array"
+        },
+        "target_requirement_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Target Requirement Id",
+          "type": "string"
+        },
+        "approved_assumptions": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Approved Assumptions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks",
+        "requirements",
+        "findings",
+        "target_requirement_id"
+      ],
+      "title": "RevisionInput",
+      "type": "object"
+    },
+    "RevisionResult": {
+      "additionalProperties": false,
+      "properties": {
+        "original_text": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Original Text",
+          "type": "string"
+        },
+        "revision": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Revision"
+        },
+        "alternatives": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Alternatives",
+          "type": "array"
+        },
+        "explanation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Explanation",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "assumptions": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Assumptions",
+          "type": "array"
+        },
+        "decisions": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Decisions",
+          "type": "array"
+        },
+        "acceptance_tests": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "title": "Acceptance Tests",
+          "type": "array"
+        },
+        "requires_human_approval": {
+          "const": true,
+          "title": "Requires Human Approval",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "original_text",
+        "revision",
+        "alternatives",
+        "explanation",
+        "evidence",
+        "assumptions",
+        "decisions",
+        "acceptance_tests",
+        "requires_human_approval"
+      ],
+      "title": "RevisionResult",
+      "type": "object"
+    },
+    "Risk": {
+      "additionalProperties": false,
+      "properties": {
+        "finding_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "impact": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Impact",
+          "type": "string"
+        },
+        "stakeholders": {
+          "items": {
+            "maxLength": 12000,
+            "minLength": 1,
+            "pattern": "\\S",
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Stakeholders",
+          "type": "array"
+        },
+        "priority": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Priority",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "maxItems": 60,
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding_id",
+        "impact",
+        "stakeholders",
+        "priority",
+        "evidence",
+        "uncertainty"
+      ],
+      "title": "Risk",
+      "type": "object"
+    },
+    "RiskInput": {
+      "additionalProperties": false,
+      "properties": {
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "maxItems": 3000,
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        },
+        "requirements": {
+          "items": {
+            "$ref": "#/$defs/RegistryEntry"
+          },
+          "title": "Requirements",
+          "type": "array"
+        },
+        "business_context": {
+          "anyOf": [
+            {
+              "maxLength": 12000,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Business Context"
+        },
+        "findings": {
+          "items": {
+            "$ref": "#/$defs/KnownFinding"
+          },
+          "minItems": 1,
+          "title": "Findings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "blocks",
+        "requirements",
+        "findings"
+      ],
+      "title": "RiskInput",
+      "type": "object"
+    },
+    "RiskResult": {
+      "additionalProperties": false,
+      "properties": {
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "title": "Risks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "risks"
+      ],
+      "title": "RiskResult",
+      "type": "object"
+    },
+    "SourceMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "filename": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Filename",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "pdf",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "page_count": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Count"
+        }
+      },
+      "required": [
+        "document_id",
+        "filename",
+        "format"
+      ],
+      "title": "SourceMetadata",
+      "type": "object"
+    },
+    "SyntheticDocument": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Document Id",
+          "type": "string"
+        },
+        "blocks": {
+          "items": {
+            "$ref": "#/$defs/Block"
+          },
+          "minItems": 1,
+          "title": "Blocks",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "blocks"
+      ],
+      "title": "SyntheticDocument",
+      "type": "object"
+    },
+    "Verdict": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "verdict": {
+          "enum": [
+            "confirmed",
+            "requires_clarification",
+            "rejected",
+            "duplicate"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "counterevidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Counterevidence",
+          "type": "array"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "informational"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "explanation": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Explanation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Uncertainty",
+          "type": "string"
+        },
+        "action": {
+          "maxLength": 12000,
+          "minLength": 1,
+          "pattern": "\\S",
+          "title": "Action",
+          "type": "string"
+        },
+        "duplicate_of": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "pattern": "\\S",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Duplicate Of"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "verdict",
+        "evidence",
+        "counterevidence",
+        "severity",
+        "explanation",
+        "uncertainty",
+        "action"
+      ],
+      "title": "Verdict",
+      "type": "object"
+    }
+  },
+  "operations": {
+    "extract": {
+      "input": {
+        "$ref": "#/$defs/ExtractInput"
+      },
+      "output": {
+        "$ref": "#/$defs/Inventory"
+      },
+      "tier": "fast",
+      "input_token_upper_limit": 180000,
+      "max_output_tokens": 8192
+    },
+    "individual": {
+      "input": {
+        "$ref": "#/$defs/IndividualInput"
+      },
+      "output": {
+        "$ref": "#/$defs/IndividualResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 120000,
+      "max_output_tokens": 16384
+    },
+    "global": {
+      "input": {
+        "$ref": "#/$defs/GlobalInput"
+      },
+      "output": {
+        "$ref": "#/$defs/GlobalResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 320000,
+      "max_output_tokens": 16384
+    },
+    "critic": {
+      "input": {
+        "$ref": "#/$defs/CriticInput"
+      },
+      "output": {
+        "$ref": "#/$defs/CriticResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 240000,
+      "max_output_tokens": 16384
+    },
+    "risk": {
+      "input": {
+        "$ref": "#/$defs/RiskInput"
+      },
+      "output": {
+        "$ref": "#/$defs/RiskResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 120000,
+      "max_output_tokens": 8192
+    },
+    "copilot": {
+      "input": {
+        "$ref": "#/$defs/CopilotInput"
+      },
+      "output": {
+        "$ref": "#/$defs/CopilotResult"
+      },
+      "tier": "fast",
+      "input_token_upper_limit": 100000,
+      "max_output_tokens": 4096
+    },
+    "revision": {
+      "input": {
+        "$ref": "#/$defs/RevisionInput"
+      },
+      "output": {
+        "$ref": "#/$defs/RevisionResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 100000,
+      "max_output_tokens": 8192
+    },
+    "compare": {
+      "input": {
+        "$ref": "#/$defs/CompareInput"
+      },
+      "output": {
+        "$ref": "#/$defs/CompareResult"
+      },
+      "tier": "reasoning",
+      "input_token_upper_limit": 320000,
+      "max_output_tokens": 16384
+    },
+    "benchmark": {
+      "input": {
+        "$ref": "#/$defs/BenchmarkInput"
+      },
+      "output": {
+        "$ref": "#/$defs/BenchmarkResult"
+      },
+      "tier": "fast",
+      "input_token_upper_limit": 32000,
+      "max_output_tokens": 8192
+    }
+  }
+}
