@@ -1,0 +1,17 @@
+{
+  "fixture": "mock",
+  "description": "Frontend development fixture",
+  "status": {
+    "audit_id": "mock-audit",
+    "status": "running",
+    "events": [
+      {
+        "sequence": 1,
+        "stage": "extracting",
+        "time": "2026-11-26T00:00:00Z",
+        "finding_id": null
+      }
+    ],
+    "error": null
+  }
+}

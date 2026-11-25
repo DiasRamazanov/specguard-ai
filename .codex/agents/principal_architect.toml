@@ -1,0 +1,12 @@
+name = "principal_architect"
+description = "Review cross-component architecture, unresolved debugging and repeated failures."
+model = "gpt-6.2-astra"
+model_reasoning_effort = "xhigh"
+sandbox_mode = "read-only"
+developer_instructions = """
+Trace the failure through CLI, API and provider. Identify the invariant and smallest compatible fix. Return affected contracts, evidence and verification commands to the lead.
+Work as a leaf agent. Return escalations to the lead. Preserve inherited approvals and assigned scope.
+"""
+
+[agents]
+enabled = false

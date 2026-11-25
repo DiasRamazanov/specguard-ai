@@ -1,0 +1,94 @@
+{
+  "$defs": {
+    "DocumentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "pdf",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "page_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Count"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "filename",
+        "format",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "DocumentMetadata",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "attachment_id": {
+      "title": "Attachment Id",
+      "type": "string"
+    },
+    "document": {
+      "$ref": "#/$defs/DocumentMetadata"
+    },
+    "purpose": {
+      "enum": [
+        "context",
+        "comparison",
+        "revision"
+      ],
+      "title": "Purpose",
+      "type": "string"
+    },
+    "extraction_status": {
+      "const": "extracted",
+      "default": "extracted",
+      "title": "Extraction Status",
+      "type": "string"
+    }
+  },
+  "required": [
+    "attachment_id",
+    "document",
+    "purpose"
+  ],
+  "title": "Attachment",
+  "type": "object"
+}

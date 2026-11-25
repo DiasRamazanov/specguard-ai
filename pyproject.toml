@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "specguard-ai"
+version = "0.1.0"
+description = "Evidence-grounded static review of requirements"
+requires-python = ">=3.12"
+dependencies = ["fastapi>=0.116,<1","pydantic>=2.11,<3","PyMuPDF>=1.26.5,<2","uvicorn>=0.34,<1"]
+
+[tool.setuptools.packages.find]
+include = ["specguard*"]
+
+[tool.setuptools.package-data]
+specguard = ["prompts/v1/*.md", "prompts/v1/*.json", "prompts/v1/**/*.json"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[tool.ruff]
+line-length = 110

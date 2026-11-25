@@ -1,0 +1,837 @@
+{
+  "$defs": {
+    "AuditCoverage": {
+      "additionalProperties": false,
+      "properties": {
+        "source_blocks": {
+          "title": "Source Blocks",
+          "type": "integer"
+        },
+        "extraction_blocks_reviewed": {
+          "title": "Extraction Blocks Reviewed",
+          "type": "integer"
+        },
+        "requirements": {
+          "title": "Requirements",
+          "type": "integer"
+        },
+        "individually_assessed": {
+          "title": "Individually Assessed",
+          "type": "integer"
+        },
+        "global_pass_complete": {
+          "title": "Global Pass Complete",
+          "type": "boolean"
+        },
+        "critic_complete": {
+          "title": "Critic Complete",
+          "type": "boolean"
+        },
+        "complete": {
+          "title": "Complete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_blocks",
+        "extraction_blocks_reviewed",
+        "requirements",
+        "individually_assessed",
+        "global_pass_complete",
+        "critic_complete",
+        "complete"
+      ],
+      "title": "AuditCoverage",
+      "type": "object"
+    },
+    "CriterionAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "valid",
+            "confirmed_defect",
+            "requires_clarification",
+            "context_dependent",
+            "insufficient_evidence",
+            "not_applicable"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "criterion",
+        "status",
+        "explanation"
+      ],
+      "title": "CriterionAssessment",
+      "type": "object"
+    },
+    "DocumentMetadata": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "filename": {
+          "title": "Filename",
+          "type": "string"
+        },
+        "format": {
+          "enum": [
+            "markdown",
+            "pdf",
+            "text"
+          ],
+          "title": "Format",
+          "type": "string"
+        },
+        "sha256": {
+          "title": "Sha256",
+          "type": "string"
+        },
+        "size_bytes": {
+          "title": "Size Bytes",
+          "type": "integer"
+        },
+        "page_count": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Count"
+        },
+        "warnings": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Warnings",
+          "type": "array"
+        }
+      },
+      "required": [
+        "document_id",
+        "filename",
+        "format",
+        "sha256",
+        "size_bytes"
+      ],
+      "title": "DocumentMetadata",
+      "type": "object"
+    },
+    "Evidence": {
+      "additionalProperties": false,
+      "properties": {
+        "evidence_id": {
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "quote",
+            "absence"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "location": {
+          "$ref": "#/$defs/SourceLocation"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "kind",
+        "location"
+      ],
+      "title": "Evidence",
+      "type": "object"
+    },
+    "Finding": {
+      "additionalProperties": false,
+      "properties": {
+        "finding_id": {
+          "title": "Finding Id",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "individual",
+            "global"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "explanation": {
+          "title": "Explanation",
+          "type": "string"
+        },
+        "criterion": {
+          "title": "Criterion",
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "critical",
+            "major",
+            "minor",
+            "informational"
+          ],
+          "title": "Severity",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "confirmed",
+            "requires_clarification",
+            "context_dependent"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "document_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Document Ids",
+          "type": "array"
+        },
+        "requirement_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Requirement Ids",
+          "type": "array"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "impact": {
+          "title": "Impact",
+          "type": "string"
+        },
+        "recommendation": {
+          "title": "Recommendation",
+          "type": "string"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        },
+        "conflict_scenario": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Conflict Scenario"
+        }
+      },
+      "required": [
+        "finding_id",
+        "kind",
+        "scope",
+        "title",
+        "explanation",
+        "criterion",
+        "severity",
+        "status",
+        "document_ids",
+        "evidence",
+        "impact",
+        "recommendation"
+      ],
+      "title": "Finding",
+      "type": "object"
+    },
+    "Readiness": {
+      "additionalProperties": false,
+      "properties": {
+        "verdict": {
+          "enum": [
+            "ready",
+            "ready_with_conditions",
+            "requires_revision",
+            "unable_to_determine"
+          ],
+          "title": "Verdict",
+          "type": "string"
+        },
+        "rationale": {
+          "title": "Rationale",
+          "type": "string"
+        },
+        "confirmed_by_severity": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "propertyNames": {
+            "enum": [
+              "critical",
+              "major",
+              "minor",
+              "informational"
+            ]
+          },
+          "title": "Confirmed By Severity",
+          "type": "object"
+        },
+        "clarification_count": {
+          "title": "Clarification Count",
+          "type": "integer"
+        },
+        "priority_finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Priority Finding Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "verdict",
+        "rationale",
+        "confirmed_by_severity",
+        "clarification_count",
+        "priority_finding_ids"
+      ],
+      "title": "Readiness",
+      "type": "object"
+    },
+    "RejectedCandidate": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "title": "Candidate Id",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "title": {
+          "title": "Title",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "unsupported",
+            "duplicate",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "candidate_id",
+        "kind",
+        "title",
+        "reason",
+        "status"
+      ],
+      "title": "RejectedCandidate",
+      "type": "object"
+    },
+    "Requirement": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "original_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Original Id"
+        },
+        "summary": {
+          "title": "Summary",
+          "type": "string"
+        },
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "minItems": 1,
+          "title": "Evidence",
+          "type": "array"
+        },
+        "relationships": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Relationships",
+          "type": "array"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "document_id",
+        "summary",
+        "kind",
+        "evidence"
+      ],
+      "title": "Requirement",
+      "type": "object"
+    },
+    "RequirementAssessment": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "complete",
+            "incomplete",
+            "offline"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "criteria": {
+          "items": {
+            "$ref": "#/$defs/CriterionAssessment"
+          },
+          "title": "Criteria",
+          "type": "array"
+        },
+        "finding_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Finding Ids",
+          "type": "array"
+        },
+        "uncertainty": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uncertainty"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "status"
+      ],
+      "title": "RequirementAssessment",
+      "type": "object"
+    },
+    "SourceLocation": {
+      "additionalProperties": false,
+      "properties": {
+        "document_id": {
+          "title": "Document Id",
+          "type": "string"
+        },
+        "block_id": {
+          "title": "Block Id",
+          "type": "string"
+        },
+        "section": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Section"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page"
+        },
+        "line_start": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line Start"
+        },
+        "line_end": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line End"
+        },
+        "char_start": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Char Start"
+        },
+        "char_end": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Char End"
+        },
+        "bbox": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bbox"
+        }
+      },
+      "required": [
+        "document_id",
+        "block_id"
+      ],
+      "title": "SourceLocation",
+      "type": "object"
+    },
+    "UsageRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Model"
+        },
+        "prompt_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Prompt Version"
+        },
+        "input_tokens": {
+          "default": 0,
+          "title": "Input Tokens",
+          "type": "integer"
+        },
+        "reasoning_tokens": {
+          "default": 0,
+          "title": "Reasoning Tokens",
+          "type": "integer"
+        },
+        "output_tokens": {
+          "default": 0,
+          "title": "Output Tokens",
+          "type": "integer"
+        },
+        "latency_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Latency Ms"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        }
+      },
+      "required": [
+        "role"
+      ],
+      "title": "UsageRecord",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "audit_id": {
+      "title": "Audit Id",
+      "type": "string"
+    },
+    "created_at": {
+      "format": "date-time",
+      "title": "Created At",
+      "type": "string"
+    },
+    "agent_version": {
+      "title": "Agent Version",
+      "type": "string"
+    },
+    "model": {
+      "title": "Model",
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "live",
+        "offline"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "documents": {
+      "items": {
+        "$ref": "#/$defs/DocumentMetadata"
+      },
+      "minItems": 1,
+      "title": "Documents",
+      "type": "array"
+    },
+    "requirements": {
+      "items": {
+        "$ref": "#/$defs/Requirement"
+      },
+      "title": "Requirements",
+      "type": "array"
+    },
+    "assessments": {
+      "items": {
+        "$ref": "#/$defs/RequirementAssessment"
+      },
+      "title": "Assessments",
+      "type": "array"
+    },
+    "findings": {
+      "items": {
+        "$ref": "#/$defs/Finding"
+      },
+      "title": "Findings",
+      "type": "array"
+    },
+    "rejected_candidates": {
+      "items": {
+        "$ref": "#/$defs/RejectedCandidate"
+      },
+      "title": "Rejected Candidates",
+      "type": "array"
+    },
+    "readiness": {
+      "$ref": "#/$defs/Readiness"
+    },
+    "coverage": {
+      "$ref": "#/$defs/AuditCoverage"
+    },
+    "usage": {
+      "items": {
+        "$ref": "#/$defs/UsageRecord"
+      },
+      "title": "Usage",
+      "type": "array"
+    },
+    "limitations": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Limitations",
+      "type": "array"
+    }
+  },
+  "required": [
+    "audit_id",
+    "created_at",
+    "agent_version",
+    "model",
+    "mode",
+    "documents",
+    "requirements",
+    "assessments",
+    "findings",
+    "rejected_candidates",
+    "readiness",
+    "coverage"
+  ],
+  "title": "AuditResult",
+  "type": "object"
+}

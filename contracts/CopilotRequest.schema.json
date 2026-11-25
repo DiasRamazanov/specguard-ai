@@ -1,0 +1,62 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "question": {
+      "maxLength": 4000,
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "requirement_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Requirement Id"
+    },
+    "finding_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finding Id"
+    },
+    "attachment_ids": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 4,
+      "title": "Attachment Ids",
+      "type": "array"
+    },
+    "mode": {
+      "default": "offline",
+      "enum": [
+        "offline",
+        "live"
+      ],
+      "title": "Mode",
+      "type": "string"
+    },
+    "allow_external_processing": {
+      "default": false,
+      "title": "Allow External Processing",
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "question"
+  ],
+  "title": "CopilotRequest",
+  "type": "object"
+}

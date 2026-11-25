@@ -1,0 +1,53 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "sequence": {
+      "title": "Sequence",
+      "type": "integer"
+    },
+    "stage": {
+      "enum": [
+        "document_received",
+        "extracting",
+        "validating_individual",
+        "validating_global",
+        "contradiction_detected",
+        "verifying_evidence",
+        "generating_report",
+        "completed",
+        "failed",
+        "attachment_received",
+        "attachment_reading",
+        "comparing_documents",
+        "copilot_thinking",
+        "copilot_response_completed"
+      ],
+      "title": "Stage",
+      "type": "string"
+    },
+    "time": {
+      "format": "date-time",
+      "title": "Time",
+      "type": "string"
+    },
+    "finding_id": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Finding Id"
+    }
+  },
+  "required": [
+    "sequence",
+    "stage",
+    "time"
+  ],
+  "title": "Event",
+  "type": "object"
+}
