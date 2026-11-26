@@ -1,5 +1,9 @@
 # SpecGuard engineering handoff
 
+## Current cross-computer handoff
+
+Clone the private GitHub repository on the teammate’s computer and select `feat/frontend`. The current contract and mock responses are in `contracts/`, backend startup instructions are in `README.md`, and the approved frontend and SPEC source references are in `references/`. Use [the collaboration guide](../collaboration.md) for invitation, clone and synchronization commands. Local Mac worktree paths in the earlier milestone notes describe the original setup.
+
 ## Shared foundation · 26 November 2026
 
 Local branch `feat/core-engine` in an isolated worktree. Starting commit `71c0ce4`. Claude Code can consume `contracts/openapi.json`, standalone schemas and the explicitly labeled mock fixture. Poll GET /audits/{audit_id} and render only returned events. Every private route takes the session bearer. Upload raw bytes with filename in the query string. The API provides separate fields for a draft revision and stakeholder decisions.
@@ -20,7 +24,7 @@ The desktop spawn tool in this existing chat exposes explicit model/effort overr
 
 Foundation checks: `python -m scripts.export_contracts` succeeded using the project venv. App-server configuration read confirmed the project layer and three-child limit. Role files, contracts and fixtures are local. Per-agent token consumption unavailable. Final results, checks and release gates follow below.
 
-## Frontend start point
+## Initial local frontend start point (historical)
 
 The shared local repository is `/Users/diasramazanov/Downloads/MNU HACK`. Its primary checkout is `main`. Core development uses `.worktrees/core-engine` on `feat/core-engine`. There is no configured Git remote. Claude Code on this Mac can open the frontend worktree; a separate machine needs an explicitly shared copy or team-owned remote. The organizer repository is a source of requirements.
 

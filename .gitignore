@@ -12,3 +12,23 @@ build/
 dist/
 .specguard/
 .DS_Store
+
+# Local credentials, environments, and generated frontend files
+*.pem
+*.key
+*.p12
+*.pfx
+*.env
+.envrc
+.secrets/
+secrets/
+.npmrc
+.netrc
+venv/
+node_modules/
+.cache/
+.mypy_cache/
+.next/
+coverage/
+playwright-report/
+test-results/
