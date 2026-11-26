@@ -124,9 +124,8 @@ REQ-000: Система должна пропускать проверку в о
 
 
 def test_offline_finding_and_report_expose_evidence_and_incomplete_analysis():
-    from specguard.report import render_markdown
-
     from specguard.core import audit_documents
+    from specguard.report import render_markdown
 
     document = ingest_document(
         "receipts.md",
@@ -335,3 +334,27 @@ def test_engine_keeps_analysis_coverage_honest_on_provider_failure(fail_role):
         assert matching[0].status == "confirmed"
         assert matching[0].severity == "major"
         assert result.readiness.verdict == "requires_revision"
+
+
+def test_unsubstantiated_critic_cannot_hide_local_placeholder():
+    from specguard.core import audit_documents
+    from specguard.intelligence import verify
+
+    class RejectingCritic(ScriptedProvider):
+        def run(self, role, payload):
+            if role != "critic":
+                return super().run(role, payload)
+            verdicts = super().run(role, payload)
+            for verdict in verdicts["verdicts"]:
+                verdict.update(
+                    verdict="rejected",
+                    evidence=[],
+                    counterevidence=[],
+                    explanation="Предложено скрыть замечание без подтверждения.",
+                )
+            return verify(role, payload, verdicts)
+
+    doc = ingest_document("scope.md", b"- SG-01: The service must retain logs for TBD days.")
+    audit = audit_documents([doc], provider=RejectingCritic())
+    finding = next(f for f in audit.findings if f.kind == "unfilled_placeholder")
+    assert finding.status == "confirmed" and finding.review_explanation

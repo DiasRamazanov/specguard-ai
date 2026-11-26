@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import re
+import subprocess
 from collections import defaultdict
 from collections.abc import Callable, Mapping, Sequence
 from datetime import datetime, timezone
+from functools import lru_cache
 from hashlib import sha256
 from itertools import combinations
+from pathlib import Path
 from typing import Protocol
 from uuid import uuid4
 
@@ -52,6 +55,22 @@ class SemanticProvider(Protocol):
     records: list[dict]
 
     def run(self, role: str, payload: dict) -> dict: ...
+
+
+@lru_cache(maxsize=1)
+def revision() -> str:
+    root = Path(__file__).resolve().parents[1]
+    if (root / ".git").exists():
+        try:
+            return subprocess.check_output(
+                ["git", "-C", str(root), "rev-parse", "--verify", "HEAD"],
+                text=True,
+                stderr=subprocess.DEVNULL,
+                timeout=2,
+            ).strip()
+        except (OSError, subprocess.SubprocessError):
+            pass
+    return __version__
 
 
 def _id(prefix: str, *parts: str) -> str:
@@ -403,6 +422,7 @@ def _global_pass(
     provider: SemanticProvider,
     limitations: list[str],
     use_full_context: bool,
+    individual_candidates: Sequence[dict],
 ) -> tuple[list[dict], bool]:
     output = []
     windows, complete = _global_windows(blocks, requirements, use_full_context)
@@ -411,7 +431,15 @@ def _global_pass(
     for context in windows:
         keys = {_key(block) for block in context}
         registry = [req for req in requirements if all(_matches_block(cite, keys) for cite in req.evidence)]
-        result = _call(provider, "global", _role_payload(context, registry), limitations)
+        ids = {r.requirement_id for r in registry}
+        payload = _role_payload(context, registry)
+        payload["candidates"] = [
+            item
+            for item in individual_candidates
+            if set(item["requirement_ids"]) <= ids
+            and all((e["document_id"], e["block_id"]) in keys for e in item["evidence"])
+        ][:32]
+        result = _call(provider, "global", payload, limitations)
         if result is None:
             complete = False
         else:
@@ -587,6 +615,7 @@ def _adjudicate(
     rejected: list[RejectedCandidate],
 ) -> list[Finding]:
     findings = []
+    by_id = {cid: item for cid, item, _ in candidates}
     for candidate_id, finding, local in candidates:
         verdict = verdicts.get(candidate_id)
         if verdict is None:
@@ -605,6 +634,17 @@ def _adjudicate(
             continue
         decision = verdict["verdict"]
         if decision in {"rejected", "duplicate"}:
+            counter = _evidence_set(verdict["counterevidence"], index) or []
+            other = by_id.get(verdict.get("duplicate_of"))
+            linked_duplicate = other is not None and _is_duplicate(finding, other)
+            if local or (decision == "duplicate" and not linked_duplicate):
+                # The critic may disagree with a reproducible local observation.
+                # Keep its evidence available for human resolution.
+                updated = {"review_explanation": verdict["explanation"], "counterevidence": counter}
+                if not local or counter:
+                    updated["status"] = "requires_clarification"
+                findings.append(finding.model_copy(update=updated))
+                continue
             rejected.append(
                 RejectedCandidate(
                     candidate_id=candidate_id,
@@ -630,7 +670,7 @@ def _adjudicate(
             continue
         support = {cite.evidence_id: cite for cite in [*finding.evidence, *evidence]}
         status = finding.status
-        if decision == "requires_clarification" and status == "confirmed":
+        if decision == "requires_clarification" and status == "confirmed" and (not local or counterevidence):
             status = decision
         if status == "confirmed" and not local and not any(item.kind == "quote" for item in evidence):
             status = "requires_clarification"
@@ -652,6 +692,24 @@ def _adjudicate(
             )
         )
     return findings
+
+
+def _risk_pass(findings, blocks, requirements, provider, limitations):
+    verified = [f for f in findings if f.status == "confirmed"]
+    for start in range(0, min(len(verified), MAX_CRITIC_CANDIDATES), 5):
+        batch = verified[start : start + 5]
+        ids = {i for f in batch for i in f.requirement_ids}
+        registry = [r for r in requirements if r.requirement_id in ids]
+        anchors = {
+            (e.location.document_id, e.location.block_id) for row in [*batch, *registry] for e in row.evidence
+        }
+        payload = _role_payload(_neighbor_blocks(blocks, anchors), registry)
+        payload["findings"] = [provider_finding(f) for f in batch]
+        result = _call(provider, "risk", payload, limitations)
+        if result:
+            impacts = {row["finding_id"]: row["impact"] for row in result["risks"]}
+            for finding in batch:
+                finding.impact = impacts[finding.finding_id]
 
 
 def _assessments(
@@ -808,7 +866,12 @@ def audit_documents(
         if progress:
             progress("validating_global", {"document_count": len(documents)})
         globals_found, global_complete = _global_pass(
-            blocks, requirements, provider, limitations, use_full_context
+            blocks,
+            requirements,
+            provider,
+            limitations,
+            use_full_context,
+            [item for item, scope, local in raw if scope == "individual" and not local],
         )
         raw.extend((candidate, "global", False) for candidate in globals_found)
     if progress:
@@ -824,6 +887,8 @@ def audit_documents(
             use_full_context,
         )
     findings = _adjudicate(candidates, verdicts, index, rejected)
+    if provider is not None:
+        _risk_pass(findings, blocks, requirements, provider, limitations)
     for finding in findings:
         if progress and finding.kind in CONTRADICTIONS and finding.status == "confirmed":
             progress("contradiction_detected", {"finding_ids": [finding.finding_id]})
@@ -852,7 +917,7 @@ def audit_documents(
     return AuditResult(
         audit_id=audit_id or uuid4().hex,
         created_at=started,
-        agent_version=__version__,
+        agent_version=revision(),
         model=", ".join(model_names)
         if model_names
         else ("Модель не отчиталась" if provider else "Без модели"),
