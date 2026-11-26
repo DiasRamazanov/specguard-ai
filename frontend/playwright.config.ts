@@ -1,9 +1,10 @@
 import { defineConfig, devices } from '@playwright/test'
 
 // E2E runs the real offline backend (no provider key) plus the Vite dev server with its
-// same-origin /api proxy. Set SPECGUARD_PYTHON to override the interpreter.
+// same-origin /api proxy. The backend command runs from the repo root (cwd '..'), so the
+// default interpreter path is relative to the repo root. Set SPECGUARD_PYTHON to override.
 const python =
-  process.env.SPECGUARD_PYTHON ?? (process.platform === 'win32' ? '..\\.venv\\Scripts\\python.exe' : '../.venv/bin/python')
+  process.env.SPECGUARD_PYTHON ?? (process.platform === 'win32' ? '.venv\\Scripts\\python.exe' : '.venv/bin/python')
 
 export default defineConfig({
   testDir: './e2e',

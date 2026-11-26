@@ -20,10 +20,20 @@ export function requirementLabel(r: Requirement): string {
   return r.original_id ?? r.requirement_id
 }
 
-/** Summary for display: drops a leading list marker and a repeated "ID:" prefix. Source text is unchanged. */
+const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+/**
+ * Summary for display: drops a leading list marker and a repeated "ID:" prefix. Source text is unchanged.
+ * The ID is stripped only when the complete ID is followed by a delimiter (":" "—" "–", or a spaced "-"),
+ * so "REQ-1" never matches the start of "REQ-10" or "REQ-1-A".
+ */
 export function displaySummary(r: Requirement): string {
   let s = r.summary.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '')
-  if (r.original_id && s.startsWith(r.original_id)) s = s.slice(r.original_id.length).replace(/^\s*[:—–-]\s*/, '')
+  if (r.original_id) {
+    const prefix = new RegExp(`^${escapeRegExp(r.original_id)}(?:\\s*[:—–]|\\s+-)\\s*`)
+    const rest = s.replace(prefix, '')
+    if (rest !== s && rest.trim()) s = rest
+  }
   return s || r.summary
 }
 
