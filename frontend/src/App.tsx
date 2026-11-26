@@ -3,6 +3,7 @@ import { api, type SpecGuardClient } from './api/client'
 import type { Finding, SourceLocation } from './api/types'
 import { CopilotPanel, type CopilotHandle } from './copilot/CopilotPanel'
 import { BrandMark } from './components/BrandMark'
+import { ConfirmDialog } from './components/ConfirmDialog'
 import { Icon, type IconName } from './components/Icons'
 import { ModeBadge } from './components/ModeBadge'
 import { SourceDrawer, type SourceTarget } from './components/SourceDrawer'
@@ -18,6 +19,23 @@ import { RequirementsView } from './views/RequirementsView'
 import { SetupView } from './views/SetupView'
 import type { CopilotContext, View, WorkspaceProps } from './views/shared'
 
+const VIEWS: View[] = ['overview', 'requirements', 'findings', 'contradictions', 'report']
+const VIEW_TITLES: Record<View, string> = {
+  overview: 'Обзор',
+  requirements: 'Требования',
+  findings: 'Замечания',
+  contradictions: 'Противоречия',
+  report: 'Отчёт',
+}
+
+/** Deep links: #/<view>[/<id>] — lets the browser Back button move between views. */
+export function parseRoute(hash: string): { view: View; id?: string } | null {
+  const m = /^#\/([a-z]+)(?:\/(.+))?$/.exec(hash)
+  if (!m || !VIEWS.includes(m[1] as View)) return null
+  return { view: m[1] as View, id: m[2] ? decodeURIComponent(m[2]) : undefined }
+}
+export const routeHash = (view: View, id?: string) => `#/${view}${id ? `/${encodeURIComponent(id)}` : ''}`
+
 interface Toast {
   id: number
   text: string
@@ -30,8 +48,9 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
   const toast = useCallback((text: string, kind: Toast['kind'] = 'error') => {
     const id = Date.now() + Math.random()
     setToasts((t) => [...t.slice(-2), { id, text, kind }])
-    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 5000)
+    setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 7000)
   }, [])
+  const dismissToast = (id: number) => setToasts((t) => t.filter((x) => x.id !== id))
 
   const audit = useAudit(client, {
     onEvents: mascot.pushEvents,
@@ -48,7 +67,9 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
   const [source, setSource] = useState<SourceTarget | null>(null)
   const [motion, setMotion] = useState(true)
   const [shell, setShell] = useState<HTMLDivElement | null>(null)
+  const [pendingRevalidation, setPendingRevalidation] = useState<File | null>(null)
   const trigger = useRef<HTMLButtonElement>(null)
+  const main = useRef<HTMLElement>(null)
   const copilot = useRef<CopilotHandle>(null)
 
   const result = audit.result
@@ -57,8 +78,34 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
       setView('overview')
       setSelected(undefined)
       setContext({})
+      history.replaceState(null, '', routeHash('overview'))
     }
   }, [result])
+
+  // Browser Back/Forward between views of the current audit.
+  useEffect(() => {
+    const onPop = () => {
+      if (!result) return
+      const route = parseRoute(location.hash) ?? { view: 'overview' as View }
+      setView(route.view)
+      setSelected(route.id)
+    }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [result])
+
+  // Descriptive tab title per screen.
+  useEffect(() => {
+    const base = 'SpecGuard AI'
+    document.title =
+      audit.phase === 'ready'
+        ? `${VIEW_TITLES[view]} · ${base}`
+        : audit.phase === 'running'
+          ? `Анализ… · ${base}`
+          : audit.phase === 'failed'
+            ? `Ошибка анализа · ${base}`
+            : `${base} — аудит технических заданий`
+  }, [audit.phase, view])
 
   const filenames = useMemo(
     () => Object.fromEntries((result?.documents ?? []).map((d) => [d.document_id, d.filename])),
@@ -98,7 +145,20 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
   const navigate = useCallback((v: View, id?: string) => {
     setView(v)
     setSelected(id)
+    const hash = routeHash(v, id)
+    if (location.hash !== hash) history.pushState(null, '', hash)
   }, [])
+
+  /** Sidebar navigation also moves focus to the new content for keyboard and screen-reader users. */
+  const navigateFromMenu = (v: View) => {
+    navigate(v)
+    requestAnimationFrame(() => {
+      const heading = main.current?.querySelector<HTMLElement>('h1')
+      if (!heading) return
+      heading.tabIndex = -1
+      heading.focus({ preventScroll: true })
+    })
+  }
 
   const openSource = useCallback((location: SourceLocation, quote?: string | null) => setSource({ location, quote }), [])
 
@@ -128,6 +188,9 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
 
   return (
     <div className="shell" ref={setShell} data-motion={motion ? 'on' : 'off'}>
+      <a className="skip-link" href="#main" onClick={(e) => { e.preventDefault(); main.current?.focus() }}>
+        Перейти к содержимому
+      </a>
       <nav className="sidebar" aria-label="Навигация по аудиту">
         <div className="logo">
           <BrandMark />
@@ -141,7 +204,8 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
               className="nav-item"
               aria-current={result && view === n.id ? 'page' : undefined}
               disabled={!result}
-              onClick={() => navigate(n.id)}
+              title={result ? undefined : 'Доступно после завершения анализа'}
+              onClick={() => navigateFromMenu(n.id)}
             >
               <Icon name={n.icon} size={18} />
               {n.label}
@@ -160,7 +224,7 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
         />
       </nav>
 
-      <main className="main">
+      <main className="main" id="main" ref={main} tabIndex={-1}>
         <div className="topbar">
           <div className="crumbs">
             <span>Аудиты</span>
@@ -174,7 +238,7 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
           <span className="spacer" />
           {(result || audit.phase === 'running') && <ModeBadge mode={result?.mode ?? audit.mode} model={result?.mode === 'live' ? result.model : undefined} />}
           {audit.phase !== 'setup' && (
-            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { audit.newAudit(); mascot.reset(); setCopilotOpen(false) }}>
+            <button type="button" className="btn btn-secondary btn-sm" onClick={() => { audit.newAudit(); mascot.reset(); setCopilotOpen(false); history.replaceState(null, '', location.pathname + location.search) }}>
               <Icon name="plus" size={15} /> Новый анализ
             </button>
           )}
@@ -208,12 +272,7 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
           openSource={openSource}
           track={track}
           onError={() => mascot.signal('error')}
-          onRevalidate={(file) => {
-            if (window.confirm('Новая редакция будет проверена отдельным аудитом. Исходный аудит не изменится. Продолжить?')) {
-              setCopilotOpen(false)
-              void audit.revalidate(file)
-            }
-          }}
+          onRevalidate={(file) => setPendingRevalidation(file)}
         />
       </div>
 
@@ -221,10 +280,29 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
         <SourceDrawer client={client} auditId={result.audit_id} target={source} filenames={filenames} onClose={() => setSource(null)} />
       )}
 
+      {pendingRevalidation && (
+        <ConfirmDialog
+          title="Перепроверить новую редакцию?"
+          confirmLabel="Запустить отдельный аудит"
+          onCancel={() => setPendingRevalidation(null)}
+          onConfirm={() => {
+            const file = pendingRevalidation
+            setPendingRevalidation(null)
+            setCopilotOpen(false)
+            void audit.revalidate(file)
+          }}
+        >
+          Файл «{pendingRevalidation.name}» будет проверен отдельным аудитом. Текущий аудит и его результаты не изменятся.
+        </ConfirmDialog>
+      )}
+
       <div className="toast-stack" aria-live="assertive">
         {toasts.map((t) => (
           <div key={t.id} className={`toast ${t.kind}`} role={t.kind === 'error' ? 'alert' : 'status'}>
-            {t.text}
+            <span style={{ flex: 1 }}>{t.text}</span>
+            <button type="button" className="icon-btn" onClick={() => dismissToast(t.id)} aria-label="Закрыть уведомление">
+              <Icon name="x" size={14} />
+            </button>
           </div>
         ))}
       </div>
