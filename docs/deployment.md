@@ -17,8 +17,6 @@ From the owner's Mac with the Railway CLI installed, choose the correct project,
 railway login
 railway whoami
 railway link
-cd "/Users/diasramazanov/Downloads/SpecGuard AI Review and Release/official"
-# Run uploads from the linked project directory using the absolute source paths.
 ```
 
 ```sh
@@ -45,10 +43,22 @@ The official report digest is `3fa9cef9aef328bc6a6277b280e13c7c8ef1c3185c2a4ea17
 
 ## Runtime limits and recovery
 
-Clients receive HTTP 202 and poll the audit status. Background jobs, uploaded documents and anonymous sessions live in one process. Sessions expire after one hour. Restarting clears them and interrupts active jobs. Retry by creating a new session and uploading the originals. An individual cancellation endpoint is unavailable. Two audit slots and two parser slots bound work. The ingress accepts uploads up to 5 MiB, limits API traffic, and returns 429 under pressure. Request access logging is disabled to keep filenames, session details and uploaded text out of request logs. Keep authorized paid runs in the trusted backend environment with explicit consent and durable SQLite quota reservations. The public image needs no provider credits.
+Clients receive HTTP 202 and poll the audit status. Background jobs, uploaded documents and anonymous sessions live in one process. Sessions expire after one hour. Restarting clears them and interrupts active jobs. Retry by creating a new session and uploading the originals. An individual cancellation endpoint is unavailable. Two audit slots and two parser slots bound work. The ingress accepts uploads up to 5 MiB, limits API traffic, and returns 429 under pressure. Request access logging is disabled to keep filenames, session details and uploaded text out of request logs. Anonymous users share 24 session slots for one hour. The global rate limit alone cannot guarantee availability for a jury under hostile traffic. Restrict interactive workspace traffic at the edge for an invited demo or use the read-only /demo/ archive, which uses no session slots. Keep authorized paid runs in the trusted backend environment with explicit consent and durable SQLite quota reservations. The public image needs no provider credits.
 
 Use Railway's deployment history to redeploy the verified commit or roll back to the previous healthy deployment. Review the selected branch SHA and health response after either operation. Mounted volumes persist independently. Retain an external copy of the verified archive. Rolling back application code does not restore volume files.
 
 ## Estimated cost
 
 At listed Railway rates, 0.25 GB average memory, 0.02 average vCPU and 0.1 GB occupied disk for one month would use about USD 2.92 before egress. Actual CPU and memory depend on document size and activity. Hobby has a USD 5 monthly minimum including usage. The Free plan includes USD 1 of usage per month. Check the workspace's actual allowance before deployment. [Railway pricing](https://docs.railway.com/pricing) · [Volumes](https://docs.railway.com/volumes/reference)
+
+## Run the submission locally
+
+Build from the release checkout. For the owner's Mac, this command mounts the existing archive read-only and runs as the local user so owner-only report files remain readable. On another machine, adjust the archive path. The workspace opens at http://127.0.0.1:8080/ and the recorded jury audit at http://127.0.0.1:8080/demo/.
+
+```sh
+docker build -t specguard-jury .
+archive="$HOME/Downloads/SpecGuard AI Review and Release/official"
+docker run --rm -p 127.0.0.1:8080:8080 --user "$(id -u):$(id -g)" \
+  --mount "type=bind,source=$archive,target=/archive,readonly" \
+  -e SPECGUARD_DEMO_DIR=/archive specguard-jury
+```

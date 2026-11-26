@@ -49,8 +49,8 @@ def audited(api):
 
 
 def test_schemas_match_runtime():
-    assert app.openapi() == json.loads((ROOT / "contracts/openapi.json").read_text())
-    mock = json.loads((ROOT / "contracts/fixtures/mock-progress.json").read_text())
+    assert app.openapi() == json.loads((ROOT / "contracts/openapi.json").read_text(encoding="utf-8"))
+    mock = json.loads((ROOT / "contracts/fixtures/mock-progress.json").read_text(encoding="utf-8"))
     assert mock["fixture"] == "mock"
     AuditStatus.model_validate(mock["status"])
 

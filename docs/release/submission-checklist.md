@@ -8,6 +8,10 @@ Sources:
 
 **Judging:** four criteria at 25% each: Уточнение, Архитектура, Ценность, Презентация и защита. Finals are on 4 December.
 
+## Integration update · 27 November
+
+The release branch combines the verified frontend, backend, Railway runtime, opt-in archived audit and presentation. The earlier independent QA findings below describe the pre-integration checkout. Use the release branch link and the engineering handoff for the current status. The organizer input and original report are packaged outside Git. Owner actions still pending are granting the jury private repository access and delivering through the organizer's confirmed channel. The local demo runs without a Railway account. [Deployment and jury instructions](../deployment.md)
+
 ## Mandatory deliverables (organizer README §2, §7)
 
 | # | Requirement | Status | Evidence / gap |
