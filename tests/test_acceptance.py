@@ -358,3 +358,24 @@ def test_unsubstantiated_critic_cannot_hide_local_placeholder():
     audit = audit_documents([doc], provider=RejectingCritic())
     finding = next(f for f in audit.findings if f.kind == "unfilled_placeholder")
     assert finding.status == "confirmed" and finding.review_explanation
+
+
+@pytest.mark.parametrize(
+    ("section", "upper_clause", "note", "expected"),
+    [
+        ("Transport", "8 packets", "", "confirmed"),
+        ("Transport", "8 packets in recovery mode", "", "requires_clarification"),
+        ("Transport", "8 frames", "", "requires_clarification"),
+        ("Transport", "8 packets", "Applies only to test systems.", "requires_clarification"),
+        ("Backup", "8 packets", "", "requires_clarification"),
+    ],
+)
+def test_cross_document_bounds_preserve_applicability_and_units(section, upper_clause, note, expected):
+    from specguard.core import audit_documents
+
+    lower = "# Transport\n\n- NET-16: Window size must be at least 16 packets."
+    upper = f"# {section}\n\n{note}\n\n- NET-24: Window size must be at most {upper_clause}."
+    docs = [ingest_document(name, value.encode()) for name, value in [("in.md", lower), ("out.md", upper)]]
+    finding = next(item for item in audit_documents(docs).findings if item.kind == "contradiction")
+    assert finding.status == expected
+    assert {ref.location.document_id for ref in finding.evidence} == {doc.document_id for doc in docs}
