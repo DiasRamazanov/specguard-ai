@@ -218,6 +218,9 @@ class BodyLimit:
         if scope["type"] != "http" or scope["method"] != "POST":
             return await self.app(scope, receive, send)
         path = scope["path"]
+        root = scope.get("root_path", "")
+        if root and path.startswith(f"{root}/"):
+            path = path[len(root) :]
         limit = UPLOAD_LIMIT if path == "/documents" or path.endswith("/attachments") else 32768
         data = bytearray()
         while True:

@@ -28,15 +28,15 @@
 .intro .reply b { font-family: var(--font-heading); }
 .reply.pending { color: var(--deep); font-style: italic; }
 .reply.error { background: var(--critical-bg); border-color: #f6c9c9; color: #9b1c1c; display: flex; gap: 6px; align-items: flex-start; }
-.reply .who { display: block; font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.reply .who { display: block; font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .reply .uncertainty { font-size: 12px; color: var(--secondary); margin-top: 6px; font-style: italic; }
 .reply .cites { margin-top: 8px; }
-.reply .cites .label, .draft-block .label { display: block; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
+.reply .cites .label, .draft-block .label { display: block; font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }
 .reply .cites ul { margin: 0; padding-left: 18px; }
 .reply .evidence { background: #fff; font-size: 12.5px; }
 .reply .change { border-top: 1px solid #e4dbf8; padding-top: 8px; margin-top: 8px; }
 .question { background: var(--primary); color: #fff; margin-left: 28px; overflow-wrap: anywhere; white-space: pre-wrap; }
-.question .qctx, .question .qfiles { display: block; font-size: 11.5px; opacity: .85; margin-bottom: 3px; }
+.question .qctx, .question .qfiles { display: block; font-size: 12px; opacity: .85; margin-bottom: 3px; }
 .draft { background: #fff; border-color: #dccdfb; }
 .draft[data-decision='approved'] { border-color: #a7e3bd; }
 .draft[data-decision='rejected'] { opacity: .7; }
@@ -52,7 +52,7 @@
 .composer textarea { width: 100%; border: 0; resize: vertical; padding: 5px; min-height: 44px; max-height: 200px; outline: none; background: transparent; }
 .composer .toolbar { display: flex; align-items: center; gap: 6px; }
 .composer select { border: 1px solid var(--border); border-radius: 7px; padding: 5px 6px; background: #fff; font-size: 12.5px; color: var(--deep); }
-.composer .hint { display: block; font-size: 11px; color: var(--muted); margin-top: 4px; }
+.composer .hint { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
 .attach, .send { border: 0; border-radius: 8px; padding: 8px; background: var(--lavender); color: var(--deep); display: inline-flex; }
 .send { margin-left: auto; background: var(--primary); color: #fff; }
 .send:disabled, .attach:disabled { opacity: .45; }
@@ -60,17 +60,17 @@
 .chip { display: flex; align-items: center; gap: 7px; background: #f6f2ff; padding: 6px 7px; border-radius: 8px; font-size: 12.5px; }
 .chip.error { background: var(--critical-bg); }
 .chip input { accent-color: var(--primary); }
-.chip .ftype { font-size: 9.5px; font-weight: 800; background: #fff; color: var(--primary); border-radius: 5px; padding: 3px 4px; flex: none; }
+.chip .ftype { font-size: 11px; font-weight: 800; background: #fff; color: var(--primary); border-radius: 5px; padding: 3px 4px; flex: none; }
 .chip .grow { flex: 1; min-width: 0; }
 .chip .name { display: block; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.chip .meta { display: block; color: var(--secondary); font-size: 11.5px; }
-.chip .ok { color: #13803b; }
-.chip .bad { color: #b91c1c; }
+.chip .meta { display: block; color: var(--secondary); font-size: 12px; }
+.chip .ok { color: var(--text-ok); }
+.chip .bad { color: var(--text-bad); }
 
 .copilot-foot { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; padding: 8px 14px 10px; border-top: 1px solid #f0ecf7; font-size: 12px; color: var(--secondary); }
 .copilot-foot label { display: inline-flex; gap: 4px; align-items: center; }
 .copilot-foot input { accent-color: var(--primary); }
-.copilot-foot .mode-note { flex-basis: 100%; font-size: 11px; color: var(--muted); }
+.copilot-foot .mode-note { flex-basis: 100%; font-size: 12px; color: var(--muted); }
 .copilot-foot .consent-inline { color: var(--deep); }
 
 @media (max-width: 760px) {

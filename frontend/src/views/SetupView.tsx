@@ -130,14 +130,14 @@ export function SetupView({ audit }: { audit: AuditController }) {
                         {formatBytes(d.file.size)} ·{' '}
                         {d.state === 'uploading' && 'загрузка…'}
                         {d.state === 'ready' && (
-                          <span style={{ color: '#13803b' }}>
+                          <span className="text-ok">
                             загружен{d.meta?.page_count ? `, ${d.meta.page_count} стр.` : ''}
                           </span>
                         )}
-                        {d.state === 'error' && <span style={{ color: '#c42020' }}>{d.error}</span>}
+                        {d.state === 'error' && <span className="text-bad" role="alert">{d.error}</span>}
                       </span>
                       {d.meta?.warnings?.map((w) => (
-                        <span key={w} className="small" style={{ display: 'block', color: '#8a5a00' }}>{w}</span>
+                        <span key={w} className="small text-warn" style={{ display: 'block' }}>{w}</span>
                       ))}
                     </span>
                     {d.state === 'error' && (
@@ -189,10 +189,18 @@ export function SetupView({ audit }: { audit: AuditController }) {
               </div>
             )}
 
-            <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: 16, padding: '12px 16px' }} disabled={!canStart} onClick={() => void audit.start()}>
+            <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: 16, padding: '12px 16px' }} disabled={!canStart} aria-describedby={canStart ? undefined : 'start-help'} onClick={() => void audit.start()}>
               Начать анализ <Icon name="arrow" size={16} />
             </button>
-            {liveBlocked && <p className="small muted" style={{ marginTop: 6 }}>Для режима DeepSeek требуется согласие на отправку текста.</p>}
+            {!canStart && (
+              <p className="helper" id="start-help">
+                {uploading
+                  ? 'Дождитесь окончания загрузки файлов.'
+                  : liveBlocked
+                    ? 'Для режима DeepSeek требуется согласие на отправку текста.'
+                    : 'Добавьте хотя бы один документ PDF, Markdown или TXT.'}
+              </p>
+            )}
           </div>
         </div>
       </section>

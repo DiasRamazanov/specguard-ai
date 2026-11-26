@@ -562,12 +562,49 @@ def _unit(raw: str | None) -> tuple[str, Decimal]:
     return _UNITS.get(value, _UNITS.get(value.rstrip("s"), (value, Decimal(1))))
 
 
+def _matching_bound_context(
+    lower: SourceBlock,
+    upper: SourceBlock,
+    documents: dict[str, list[SourceBlock]],
+) -> bool:
+    """Confirm bounds across sources only if the rest of both specifications agrees."""
+    if lower.section != upper.section:
+        return False
+    if lower.location.document_id == upper.location.document_id:
+        return True
+    if not lower.section:
+        return False
+
+    def declaration(block: SourceBlock) -> str | None:
+        line = _ID_START.sub("", block.text, count=1).lstrip(" .:*—–)")
+        match = _BOUND_INLINE.match(line) or _BOUND_HEAD.match(line)
+        if not match:
+            return None
+        # Preserve each unit, trailing condition and any other text outside the bound.
+        start = match.start("bound")
+        end = match.end("number")
+        # Prefix-form bounds put the subject between the operator and the number.
+        return (line[:start] + line[match.end("bound") : match.start("number")] + line[end:]).strip()
+
+    left = declaration(lower)
+    if left is None or left != declaration(upper):
+        return False
+    lower_doc = documents[lower.location.document_id]
+    upper_doc = documents[upper.location.document_id]
+    return len(lower_doc) == len(upper_doc) and all(
+        (a is lower and b is upper) or (a.kind == b.kind and a.text == b.text)
+        for a, b in zip(lower_doc, upper_doc, strict=True)
+    )
+
+
 def _bound_rules(blocks: Sequence[SourceBlock]) -> list[dict]:
     bounds: dict[str, dict[str, list[tuple[Decimal, str, SourceBlock, str]]]] = defaultdict(
         lambda: defaultdict(list)
     )
     output = []
+    documents: dict[str, list[SourceBlock]] = defaultdict(list)
     for block in blocks:
+        documents[block.location.document_id].append(block)
         if not _content(block):
             continue
         clauses = []
@@ -602,9 +639,7 @@ def _bound_rules(blocks: Sequence[SourceBlock]) -> list[dict]:
             _, _, lower, lower_quote = by_side["lower"]
             _, _, upper, upper_quote = by_side["upper"]
             explanation = f"У показателя «{subject}» минимальное значение больше максимального."
-            same_scope = (
-                lower.location.document_id == upper.location.document_id and lower.section == upper.section
-            )
+            same_scope = _matching_bound_context(lower, upper, documents)
             output.append(
                 _candidate(
                     "contradiction",

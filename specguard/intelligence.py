@@ -9,6 +9,7 @@ from typing import Annotated, Literal, Optional
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field, StringConstraints, ValidationError
 from pydantic.json_schema import models_json_schema
 
+from . import reference_wire
 from .provider import DeepSeek, IntelligenceError
 
 VERSION = "v1"
@@ -566,7 +567,8 @@ def _verify(role, context, blocks, ids, finding_ids, output):
 class Intelligence:
     """One bounded run. All instances share the provider's persistent budget."""
 
-    def __init__(self, live=False):
+    def __init__(self, live=False, *, reference_roles=False):
+        self.reference_roles = reference_roles
         self.provider = DeepSeek(live=live)
         self.records = self.provider.records
 
@@ -575,23 +577,39 @@ class Intelligence:
         _, output_type, tier, max_input, max_output = ROLES[role]
         if role == "copilot" and context.complex:
             tier = "reasoning"
-        system = (
-            (PROMPTS / "shared.md").read_text(encoding="utf-8")
-            + "\n"
-            + (PROMPTS / (role + ".md")).read_text(encoding="utf-8")
-        )
-        schema = json.dumps(output_type.model_json_schema(), ensure_ascii=False, separators=(",", ":"))
+        common = "shared.md"
+        instructions = (PROMPTS / (role + ".md")).read_text(encoding="utf-8")
+        wire = None
+        version = VERSION
+        if self.reference_roles and role in reference_wire.ROLES:
+            wire = reference_wire.ReferenceWire(role, context.model_dump())
+            version = reference_wire.VERSION
+            common = "reference-wire.md"
+            schema = wire.schema(output_type)
+            user_content = json.dumps(wire.data, ensure_ascii=False, separators=(",", ":"))
+        else:
+            schema = json.dumps(output_type.model_json_schema(), ensure_ascii=False, separators=(",", ":"))
+            user_content = context.model_dump_json(exclude_unset=False)
+        system = (PROMPTS / common).read_text(encoding="utf-8") + "\n" + instructions
         system += "\nReturn JSON conforming to this output schema:\n" + schema
+        if wire is None and hasattr(context, "requirements"):
+            system += (
+                "\nFor requirement_id and requirement_ids use only the provided internal registry IDs. "
+                "An empty registry permits only empty requirement_ids. Never substitute an original_id. "
+                "Copy exact contiguous quotes without normalizing punctuation or Markdown. "
+                "Keep criterion explanations concise and specific. For contradiction or conflict "
+                "include two distinct source quotations and a concrete conflict_scenario."
+            )
         messages = [
             {"role": "system", "content": system},
-            {"role": "user", "content": context.model_dump_json(exclude_unset=False)},
+            {"role": "user", "content": user_content},
         ]
         return self.provider.complete(
             role,
-            VERSION,
+            version,
             tier,
             max_input,
             max_output,
             messages,
-            lambda obj: _verify(role, context, blocks, ids, finding_ids, obj),
+            lambda obj: _verify(role, context, blocks, ids, finding_ids, wire.decode(obj) if wire else obj),
         )

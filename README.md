@@ -25,10 +25,11 @@ python -m specguard validate --offline --input benchmarks/fixtures/placeholder.m
 Для живого анализа получите API-ключ в [DeepSeek Platform](https://platform.deepseek.com/api_keys) и передайте его серверному процессу через переменную окружения `DEEPSEEK_API_KEY`. Образец переменных находится в `.env.example`. При разрешении на внешний анализ установите `SPECGUARD_LIVE=1` и передайте явное согласие на отправку текста. Платные запросы расходуют квоту владельца ключа.
 
 ```bash
-python -m specguard validate --consent --input requirements.md --output report.md
+python -m specguard check-provider
+python -m specguard validate --consent --reference-roles --input requirements.md --output report.md
 ```
 
-Родительская папка выходного файла должна существовать. `--input` можно указать несколько раз. Код выхода 0 означает завершённый запуск выбранного режима, в том числе с найденными дефектами. Код 2 означает ошибку конфигурации или ввода. Код 3 означает, что записан неполный результат живой проверки. Имена моделей по умолчанию — `deepseek-flash` и `deepseek-v4-pro`. Провайдер проверяет доступ к модели перед отправкой текста. Параметры бюджета — `SPECGUARD_RUN_TOKENS`, `SPECGUARD_GLOBAL_TOKENS`, `SPECGUARD_RUN_CALLS`, `SPECGUARD_CONCURRENCY`, `SPECGUARD_RETRIES` и `SPECGUARD_TIMEOUT_SECONDS`. Общий журнал нескольких процессов настраивается через `SPECGUARD_BUDGET_DB`.
+Родительская папка выходного файла должна существовать. `--input` можно указать несколько раз. Код выхода 0 означает завершённый запуск выбранного режима, в том числе с найденными дефектами. Код 2 означает ошибку конфигурации или ввода. Код 3 означает, что записан неполный результат живой проверки. Имена моделей по умолчанию — `deepseek-flash` и `deepseek-v4-pro`. Провайдер проверяет доступ к модели перед отправкой текста. Параметры бюджета — `SPECGUARD_RUN_TOKENS`, `SPECGUARD_GLOBAL_TOKENS`, `SPECGUARD_RUN_CALLS`, `SPECGUARD_CONCURRENCY`, `SPECGUARD_RETRIES` и `SPECGUARD_TIMEOUT_SECONDS` (по умолчанию 120, максимум 180 секунд). Усилие reasoning задаёт `SPECGUARD_REASONING_EFFORT` (`low`, `high` по умолчанию или `max`). Общий журнал нескольких процессов настраивается через `SPECGUARD_BUDGET_DB`.
 
 ## HTTP API и тесты
 

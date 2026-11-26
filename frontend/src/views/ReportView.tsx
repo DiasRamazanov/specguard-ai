@@ -88,7 +88,11 @@ export function ReportView(props: WorkspaceProps & { client: SpecGuardClient }) 
       <div className="card">
         <h3 style={{ marginBottom: 6 }}>Отчёт</h3>
         {error && <div className="notice notice-error">{error}</div>}
-        {!markdown && !error && <p className="muted">Загрузка отчёта…</p>}
+        {!markdown && !error && (
+          <div className="skeleton" role="status" aria-label="Загрузка отчёта" style={{ marginTop: 10 }}>
+            <i /><i /><i /><i /><i /><i /><i /><i />
+          </div>
+        )}
         {markdown && <Markdown source={markdown} />}
       </div>
     </div>

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ApiError, type SpecGuardClient } from '../api/client'
 import type { SourceBlock, SourceLocation } from '../api/types'
 import { locationLabel } from './Evidence'
 import { Icon } from './Icons'
+import { useDialog } from './useDialog'
 
 export interface SourceTarget {
   location: SourceLocation
@@ -34,7 +35,7 @@ function highlight(text: string, quote?: string | null) {
 export function SourceDrawer({ client, auditId, target, filenames, onClose }: Props) {
   const [block, setBlock] = useState<SourceBlock | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const closeRef = useRef<HTMLButtonElement>(null)
+  const dialog = useDialog<HTMLDivElement>(onClose)
 
   useEffect(() => {
     let alive = true
@@ -49,24 +50,12 @@ export function SourceDrawer({ client, auditId, target, filenames, onClose }: Pr
     }
   }, [auditId, client, target.location.block_id, target.location.document_id])
 
-  useEffect(() => {
-    closeRef.current?.focus()
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        e.stopPropagation()
-        onClose()
-      }
-    }
-    window.addEventListener('keydown', onKey, true)
-    return () => window.removeEventListener('keydown', onKey, true)
-  }, [onClose])
-
   return (
     <div className="drawer-backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="drawer" role="dialog" aria-modal="true" aria-label="Первоисточник">
+      <div ref={dialog} className="drawer" role="dialog" aria-modal="true" aria-label="Первоисточник">
         <div className="detail-head">
           <h2>Первоисточник</h2>
-          <button ref={closeRef} type="button" className="icon-btn" onClick={onClose} aria-label="Закрыть источник">
+          <button type="button" className="icon-btn" onClick={onClose} aria-label="Закрыть источник" data-autofocus>
             <Icon name="x" />
           </button>
         </div>
@@ -76,7 +65,11 @@ export function SourceDrawer({ client, auditId, target, filenames, onClose }: Pr
           <span className="mono">{target.location.block_id}</span>
         </div>
         {error && <div className="notice notice-error">{error}</div>}
-        {!block && !error && <p className="muted">Загрузка фрагмента…</p>}
+        {!block && !error && (
+          <div className="skeleton" role="status" aria-label="Загрузка фрагмента">
+            <i /><i /><i />
+          </div>
+        )}
         {block && <div className="source-text">{highlight(block.text, target.quote)}</div>}
       </div>
     </div>

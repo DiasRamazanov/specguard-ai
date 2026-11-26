@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import type { Severity } from '../api/types'
 import { EvidenceList } from '../components/Evidence'
 import { Icon } from '../components/Icons'
@@ -7,11 +7,32 @@ import { FINDING_STATUS_LABELS, SEVERITY_LABELS, SEVERITY_ORDER, criterionLabel,
 import { SEVERITY_COLOR, bySeverity, displaySummary, requirementLabel, requirementsById, type WorkspaceProps } from './shared'
 
 type Tab = 'analysis' | 'impact' | 'recommendation' | 'source'
+const TABS: [Tab, string][] = [
+  ['analysis', 'Анализ'],
+  ['impact', 'Влияние'],
+  ['recommendation', 'Рекомендация'],
+  ['source', 'Источник'],
+]
 
 export function FindingsView(props: WorkspaceProps & { selectedId?: string; contradictionsOnly?: boolean }) {
   const { result, filenames, openSource, askSpec, requestRevision, navigate, selectedId, contradictionsOnly } = props
   const [filter, setFilter] = useState<Severity | 'all'>('all')
   const [tab, setTab] = useState<Tab>('analysis')
+  const tabsId = useId()
+  // WAI-ARIA tabs: arrows / Home / End move between tabs with roving focus.
+  const onTabKey = (e: React.KeyboardEvent<HTMLButtonElement>) => {
+    const i = TABS.findIndex(([id]) => id === tab)
+    const next =
+      e.key === 'ArrowRight' ? (i + 1) % TABS.length
+      : e.key === 'ArrowLeft' ? (i - 1 + TABS.length) % TABS.length
+      : e.key === 'Home' ? 0
+      : e.key === 'End' ? TABS.length - 1
+      : -1
+    if (next < 0) return
+    e.preventDefault()
+    setTab(TABS[next][0])
+    document.getElementById(`${tabsId}-tab-${TABS[next][0]}`)?.focus()
+  }
   const reqs = requirementsById(result)
   const view = contradictionsOnly ? 'contradictions' : 'findings'
   const pool = result.findings.filter((f) => (contradictionsOnly ? isContradiction(f) : true)).sort(bySeverity)
@@ -107,22 +128,26 @@ export function FindingsView(props: WorkspaceProps & { selectedId?: string; cont
                 </div>
               )}
 
-              <div className="tabs" role="tablist">
-                {(
-                  [
-                    ['analysis', 'Анализ'],
-                    ['impact', 'Влияние'],
-                    ['recommendation', 'Рекомендация'],
-                    ['source', 'Источник'],
-                  ] as [Tab, string][]
-                ).map(([id, label]) => (
-                  <button key={id} type="button" role="tab" className="tab" aria-selected={tab === id} onClick={() => setTab(id)}>
+              <div className="tabs" role="tablist" aria-label="Разделы замечания">
+                {TABS.map(([id, label]) => (
+                  <button
+                    key={id}
+                    id={`${tabsId}-tab-${id}`}
+                    type="button"
+                    role="tab"
+                    className="tab"
+                    aria-selected={tab === id}
+                    aria-controls={`${tabsId}-panel`}
+                    tabIndex={tab === id ? 0 : -1}
+                    onClick={() => setTab(id)}
+                    onKeyDown={onTabKey}
+                  >
                     {label}
                   </button>
                 ))}
               </div>
 
-              <div role="tabpanel">
+              <div role="tabpanel" id={`${tabsId}-panel`} aria-labelledby={`${tabsId}-tab-${tab}`} tabIndex={0}>
                 {tab === 'analysis' && (
                   <div className="insight">
                     <SpecMascot state="idle" decorative />
