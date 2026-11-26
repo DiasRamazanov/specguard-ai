@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { api, type SpecGuardClient } from './api/client'
 import type { Finding, SourceLocation } from './api/types'
 import { CopilotPanel, type CopilotHandle } from './copilot/CopilotPanel'
+import { BrandMark } from './components/BrandMark'
 import { Icon, type IconName } from './components/Icons'
 import { ModeBadge } from './components/ModeBadge'
 import { SourceDrawer, type SourceTarget } from './components/SourceDrawer'
@@ -129,7 +130,7 @@ export function App({ client = api }: { client?: SpecGuardClient }) {
     <div className="shell" ref={setShell} data-motion={motion ? 'on' : 'off'}>
       <nav className="sidebar" aria-label="Навигация по аудиту">
         <div className="logo">
-          <span className="logo-mark"><Icon name="shield" size={17} /></span>
+          <BrandMark />
           <span>SpecGuard <span className="ai">AI</span></span>
         </div>
         <div className="nav">

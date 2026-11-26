@@ -215,7 +215,7 @@ export const CopilotPanel = forwardRef<CopilotHandle, Props>(function CopilotPan
       }}
     >
       <header className="copilot-head">
-        <span className="mini"><SpecMascot state="idle" title="SPEC" /></span>
+        <span className="mini"><SpecMascot state="idle" decorative /></span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <b>SPEC Copilot</b>
           <small>Контекстный AI-помощник</small>
@@ -249,10 +249,15 @@ export const CopilotPanel = forwardRef<CopilotHandle, Props>(function CopilotPan
           )}
         </div>
 
-        <div className="reply intro">
-          {disabled
-            ? 'Привет! Я SPEC. Загрузите техническое задание и запустите аудит — после этого я отвечу на вопросы с цитатами из источника.'
-            : `Привет! Я SPEC. ${result ? `Вердикт: ${VERDICT_LABELS[result.readiness.verdict]}. ` : ''}Задайте вопрос о требованиях или прикрепите документы для контекста и сравнения.`}
+        <div className="intro">
+          <SpecMascot state="idle" decorative />
+          <div className="reply">
+            <b>Привет! Я SPEC 👋</b>
+            <br />
+            {disabled
+              ? 'Загрузите техническое задание и запустите аудит — после этого я отвечу на вопросы с цитатами из источника.'
+              : `${result ? `Вердикт: ${VERDICT_LABELS[result.readiness.verdict]}. ` : ''}Задайте вопрос о требованиях или прикрепите документы для контекста и сравнения.`}
+          </div>
         </div>
 
         <div className="history" ref={history} aria-live="polite">

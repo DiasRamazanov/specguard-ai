@@ -1,7 +1,7 @@
 import { EvidenceList } from '../components/Evidence'
 import { Icon } from '../components/Icons'
 import { ASSESSMENT_LABELS, CRITERION_STATUS_LABELS, SEVERITY_LABELS, criterionLabel } from '../labels'
-import { findingsById, requirementLabel, type WorkspaceProps } from './shared'
+import { displaySummary, findingsById, requirementLabel, type WorkspaceProps } from './shared'
 
 export function RequirementsView(props: WorkspaceProps & { selectedId?: string }) {
   const { result, filenames, openSource, askSpec, navigate, selectedId } = props
@@ -29,7 +29,7 @@ export function RequirementsView(props: WorkspaceProps & { selectedId?: string }
                 >
                   <span className="mono" style={{ color: 'var(--primary)', flex: 'none', minWidth: 64 }}>{requirementLabel(r)}</span>
                   <span className="grow">
-                    <span className="title" style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{r.summary}</span>
+                    <span className="title" style={{ fontWeight: 500, whiteSpace: 'nowrap' }}>{displaySummary(r)}</span>
                     <span className="sub">{r.section ?? r.kind}</span>
                   </span>
                   {n > 0 && <span className="badge badge-major">{n}</span>}
@@ -45,7 +45,7 @@ export function RequirementsView(props: WorkspaceProps & { selectedId?: string }
           ) : (
             <>
               <div className="detail-head">
-                <h2><span className="mono" style={{ color: 'var(--primary)' }}>{requirementLabel(selected)}</span></h2>
+                <h2><span className="id-pill" style={{ fontSize: 15, padding: '3px 10px' }}>{requirementLabel(selected)}</span></h2>
                 <button type="button" className="btn btn-secondary btn-sm" onClick={() => askSpec({ requirement: selected })}>
                   <Icon name="chat" size={15} /> Спросить SPEC
                 </button>
@@ -58,7 +58,7 @@ export function RequirementsView(props: WorkspaceProps & { selectedId?: string }
                 )}
                 <span className="mono">{selected.requirement_id}</span>
               </div>
-              <p>{selected.summary}</p>
+              <p style={{ fontSize: 15 }}>{displaySummary(selected)}</p>
               {selected.uncertainty && <p className="small muted" style={{ marginTop: 6 }}>{selected.uncertainty}</p>}
 
               <div className="section">

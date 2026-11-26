@@ -20,6 +20,15 @@ export function requirementLabel(r: Requirement): string {
   return r.original_id ?? r.requirement_id
 }
 
+/** Summary for display: drops a leading list marker and a repeated "ID:" prefix. Source text is unchanged. */
+export function displaySummary(r: Requirement): string {
+  let s = r.summary.replace(/^\s*(?:[-*•]|\d+[.)])\s+/, '')
+  if (r.original_id && s.startsWith(r.original_id)) s = s.slice(r.original_id.length).replace(/^\s*[:—–-]\s*/, '')
+  return s || r.summary
+}
+
+export const SEVERITY_COLOR = { critical: 'var(--critical)', major: 'var(--warning)', minor: '#eab308', informational: 'var(--info)' } as const
+
 export function requirementsById(result: AuditResult): Record<string, Requirement> {
   return Object.fromEntries(result.requirements.map((r) => [r.requirement_id, r]))
 }
