@@ -42,7 +42,7 @@ Sources:
 | --- | --- | --- |
 | 11 | Agent demonstration | ✅ guide: [demo-guide.md](demo-guide.md). Can run locally; a public hosted demo is **not available** (blocker R1). |
 | 12 | Presentation and defense (finals, 4 December) | ✅ [presentation](presentation/specguard-presentation.html), [PDF](presentation/specguard-presentation.pdf), [speaker notes](presentation/speaker-notes.md), [technical defense](technical-defense.md) |
-| 13 | «Уточнение» criterion: clarification questions | ✅ The official report contains 45 requests for clarification; Copilot produces stakeholder questions. Mentioned on slide 15. |
+| 13 | «Уточнение» criterion: clarification questions | ✅ The official report contains 45 requests for clarification; Copilot produces stakeholder questions. Mentioned on slide 8. |
 
 ## Release blockers (owner / Codex)
 1. **R1:** push or recover the release, deployment and Railway work. Nothing is on the remote.

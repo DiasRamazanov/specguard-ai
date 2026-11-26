@@ -20,12 +20,12 @@ Branch `feat/presentation-release-qa`, based on `origin/main` at `5607c10`. Docu
    - `tests/test_api.py::test_schemas_match_runtime`: add `encoding="utf-8"` to the read.
    - Contract export differs under Python 3.13 (413/422 reason phrases): pin 3.12, or normalise the phrases.
 5. **Visibility (R3).** Before the 27 Nov 23:59 deadline, the owner must decide between making the repository public and granting jury access. Re-run the secret scan first, and confirm rights to `references/` or exclude it.
-6. **Presentation figures.** The deck uses only the figures in your handoff: 54/54, 124/124, 12 (2/5/5), 176 = 167 + 9, 5/9, 45 clarifications, the token and time totals, and the offline benchmark. If you produce a new evaluation, update slides 15–16 and the speaker notes, and keep the old numbers labelled.
+6. **Presentation figures.** The deck uses only the figures in your handoff: 54/54, 124/124, 12 (2/5/5), 176 = 167 + 9, 5/9, 45 clarifications, and the token totals. If you produce a new evaluation, update slide 8 and the speaker notes, and keep the old numbers labelled.
 
 ## Deliverables on this branch
 | Path | Content |
 | --- | --- |
-| `docs/release/presentation/specguard-presentation.html` | 19-slide Russian deck (self-contained; OFL fonts in `fonts/`) |
+| `docs/release/presentation/specguard-presentation.html` | 10-slide static Russian deck, no animations (self-contained; OFL fonts in `fonts/`, compressed screenshots in `img/`) |
 | `docs/release/presentation/specguard-presentation.pdf` | PDF export |
 | `docs/release/presentation/previews/` | PNG of each slide (git-ignored; regenerate with `node frontend/scripts/export-presentation.mjs`) |
 | `docs/release/presentation/speaker-notes.md` | Notes and timing for each slide, with figure sources |
