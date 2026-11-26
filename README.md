@@ -25,6 +25,7 @@ python -m specguard validate --offline --input benchmarks/fixtures/placeholder.m
 Для живого анализа получите API-ключ в [DeepSeek Platform](https://platform.deepseek.com/api_keys) и передайте его серверному процессу через переменную окружения `DEEPSEEK_API_KEY`. Образец переменных находится в `.env.example`. При разрешении на внешний анализ установите `SPECGUARD_LIVE=1` и передайте явное согласие на отправку текста. Платные запросы расходуют квоту владельца ключа.
 
 ```bash
+python -m specguard check-provider
 python -m specguard validate --consent --input requirements.md --output report.md
 ```
 

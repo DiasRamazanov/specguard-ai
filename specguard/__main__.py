@@ -20,6 +20,9 @@ EXIT_INCOMPLETE = 3
 def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Статическая проверка требований SpecGuard AI.")
     commands = parser.add_subparsers(dest="command", required=True)
+    commands.add_parser(
+        "check-provider", help="Проверить доступ к обеим моделям через список моделей DeepSeek."
+    )
     validator = commands.add_parser("validate", help="Выполнить аудит PDF, Markdown или TXT.")
     validator.add_argument(
         "--input", type=Path, required=True, action="append", help="Путь к спецификации. Можно повторить."
@@ -65,6 +68,14 @@ def _output_paths(args: argparse.Namespace) -> list[tuple[Path, str]]:
 
 def main(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "check-provider":
+        try:
+            Intelligence(live=True).provider.verify_audit_models()
+        except IntelligenceError as error:
+            print(f"Проверка доступа к DeepSeek не завершена ({error.code}).", file=sys.stderr)
+            return EXIT_CONFIGURATION
+        print("Обе модели доступны в каталоге DeepSeek. Запросов на генерацию: 0.")
+        return 0
     if not args.offline and not args.consent:
         print(
             "Передача текста в DeepSeek требует --consent. Для локальных проверок используйте --offline.",
@@ -78,6 +89,8 @@ def main(argv: list[str] | None = None) -> int:
             with path.open("rb") as file:
                 documents.append(ingest_document(path.name, file.read(MAX_UPLOAD_BYTES + 1)))
         provider = None if args.offline else Intelligence(live=True)
+        if provider is not None:
+            provider.provider.verify_audit_models()
         result = audit_documents(documents, provider)
         for path, suffix in paths:
             _write(path, render_json(result) if suffix == ".json" else render_markdown(result))

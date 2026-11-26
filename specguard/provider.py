@@ -230,6 +230,11 @@ class DeepSeek:
         if model not in self._available:
             raise IntelligenceError("model_unavailable")
 
+    def verify_audit_models(self):
+        """Confirm both configured tiers before beginning an official multi-stage run."""
+        for model in self.models.values():
+            self._check_model(model)
+
     def complete(self, role, version, tier, max_input, max_output, messages, verify):
         model = self.models[tier]
         # UTF-8 bytes bound byte-level tokenizer input, plus allowance for chat framing.

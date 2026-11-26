@@ -458,3 +458,21 @@ def test_rate_limit_honors_provider_backoff(live, monkeypatch):
     with pytest.raises(IntelligenceError, match="provider_rate_limited") as exc:
         live.run("extract", VALID["extract"][0])
     assert not exc.value.retryable and exc.value.retry_after == 60 and len(live.records) == 1
+
+
+@pytest.mark.parametrize("all_models", [True, False])
+def test_catalog_preflight_requires_both_models_without_inference(live, monkeypatch, all_models):
+    from specguard.__main__ import main
+
+    seen = []
+
+    def catalog(path, payload=None):
+        assert path == "/models" and payload is None
+        seen.append(path)
+        ids = ["deepseek-flash", "deepseek-v4-pro"] if all_models else ["deepseek-flash"]
+        return {"data": [{"id": model} for model in ids]}
+
+    monkeypatch.setattr(live.provider, "_request", catalog)
+    monkeypatch.setattr("specguard.__main__.Intelligence", lambda **kwargs: live)
+    assert main(["check-provider"]) == (0 if all_models else 2)
+    assert seen == ["/models"] and live.records == []
