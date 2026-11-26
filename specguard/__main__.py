@@ -29,6 +29,11 @@ def _parser() -> argparse.ArgumentParser:
     )
     validator.add_argument("--output", type=Path, required=True, help="Путь к отчёту .md или .json.")
     validator.add_argument("--json-output", type=Path, help="Дополнительный путь к отчёту JSON.")
+    validator.add_argument(
+        "--reference-roles",
+        action="store_true",
+        help="Передавать проверяемые ссылки на источники для индивидуального, критического и риск-анализа.",
+    )
     mode = validator.add_mutually_exclusive_group()
     mode.add_argument("--offline", action="store_true", help="Локальные проверки без отправки данных.")
     mode.add_argument(
@@ -88,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
         for path in args.input:
             with path.open("rb") as file:
                 documents.append(ingest_document(path.name, file.read(MAX_UPLOAD_BYTES + 1)))
-        provider = None if args.offline else Intelligence(live=True)
+        provider = None if args.offline else Intelligence(live=True, reference_roles=args.reference_roles)
         if provider is not None:
             provider.provider.verify_audit_models()
         result = audit_documents(documents, provider)
