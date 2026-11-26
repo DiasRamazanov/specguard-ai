@@ -1,0 +1,122 @@
+/* SPEC 4.1/4.2 animation states, ported from references/spec-source/spec-animations.css.
+   Body motion, gestures, expression, gaze and LED/effects run on separate nested layers. */
+
+.robot {
+  display: block;
+  width: 100%;
+  max-width: 150px;
+  margin: auto;
+  overflow: visible;
+  filter: drop-shadow(0 5px 4px #36205e22);
+}
+.robot .spec-gesture,
+.robot .spec-body {
+  transform-box: view-box;
+  transform-origin: 80px 117px; /* 50% 78% of the 160×150 viewBox */
+}
+.robot .spec-body { animation: spec-idle 3s ease-in-out infinite; }
+.robot .led { transition: fill 0.2s; }
+.robot .blink {
+  transform-box: view-box;
+  transform-origin: 80px 92px;
+  animation: spec-blink 4.7s infinite;
+}
+.robot .gaze-auto { transform-box: view-box; }
+.robot .alert,
+.robot .scan,
+.robot .paper,
+.robot .paper2,
+.robot .spark,
+.robot .dots,
+.robot .glass {
+  opacity: 0;
+  pointer-events: none;
+  transform-box: view-box;
+}
+
+/* --- Dramatic states: brief finite motion, then settle into the idle float. --- */
+.robot[data-state='greeting'] .spec-body,
+.robot[data-state='upload'] .spec-body,
+.robot[data-state='success'] .spec-body {
+  animation: spec-happy 1.1s ease-in-out 2, spec-idle 3s ease-in-out 2.2s infinite;
+}
+.robot[data-state='attachment'] .spec-body {
+  animation: spec-nod 1.5s 2, spec-idle 3s ease-in-out 3s infinite;
+}
+.robot[data-state='critical'] .spec-body {
+  animation: spec-surprise 1.25s ease-in-out 2, spec-idle 3s ease-in-out 2.5s infinite;
+}
+.robot[data-state='error'] .spec-body {
+  animation: spec-error 1.1s ease-in-out 3, spec-idle 3s ease-in-out 3.3s infinite;
+}
+
+/* --- Work-in-progress states loop while the backend reports the stage. --- */
+.robot[data-state='extract'] .spec-body,
+.robot[data-state='report'] .spec-body,
+.robot[data-state='reading'] .spec-body { animation: spec-nod 1.5s infinite; }
+.robot[data-state='thinking'] .spec-body,
+.robot[data-state='verify'] .spec-body,
+.robot[data-state='compare'] .spec-body { animation: spec-think 2.1s ease-in-out infinite; }
+
+/* --- Effects layer --- */
+.robot[data-state='upload'] .paper,
+.robot[data-state='attachment'] .paper { opacity: 1; animation: spec-paper 1.4s 2; }
+.robot[data-state='report'] .paper,
+.robot[data-state='compare'] .paper,
+.robot[data-state='compare'] .paper2 { opacity: 1; animation: spec-paper 1.4s infinite; }
+.robot[data-state='extract'] .scan,
+.robot[data-state='verify'] .scan,
+.robot[data-state='reading'] .scan { opacity: 1; animation: spec-scan 1.4s linear infinite; }
+.robot[data-state='thinking'] .dots { opacity: 1; animation: spec-pulse 1.2s infinite; }
+.robot[data-state='critical'] .alert,
+.robot[data-state='error'] .alert { opacity: 1; animation: spec-pulse 1.2s 3; }
+.robot[data-state='success'] .spark { opacity: 1; animation: spec-pulse 1.2s 3; }
+.robot[data-state='verify'] .glass { opacity: 1; animation: spec-paper 1.6s infinite; }
+/* Comparing documents: eyes alternate between the two document icons. */
+.robot[data-state='compare'] .gaze-auto { animation: spec-alternate 2.4s ease-in-out infinite; }
+
+/* --- Gesture layer (independent of the state; the state resumes underneath). --- */
+.robot .spec-gesture.wake { animation: spec-activate 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) 1; }
+.robot .spec-gesture.ack { animation: spec-ack 0.25s ease-out 1; }
+.robot .spec-gesture.ack .eyes { transform-box: fill-box; transform-origin: center; transform: scaleY(1.2); }
+
+@keyframes spec-idle { 50% { transform: translateY(-4px); } }
+@keyframes spec-error {
+  0%, 100% { transform: translateX(0) rotate(0); }
+  15%, 55% { transform: translateX(-5px) rotate(-9deg); }
+  35%, 75% { transform: translateX(5px) rotate(9deg); }
+}
+@keyframes spec-happy {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-13px) rotate(5deg); }
+  65% { transform: translateY(-4px) rotate(-4deg); }
+}
+@keyframes spec-think {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg) translateY(-3px); }
+}
+@keyframes spec-nod { 45% { transform: translateY(3px) scaleY(0.95); } }
+@keyframes spec-surprise { 20% { transform: translateY(-9px) rotate(-6deg); } 45% { transform: rotate(5deg); } }
+@keyframes spec-scan { 0% { transform: translateY(-12px); } 100% { transform: translateY(22px); } }
+@keyframes spec-pulse { 50% { opacity: 0.35; } }
+@keyframes spec-paper { 50% { transform: translateY(-7px) rotate(4deg); } }
+@keyframes spec-blink { 0%, 45%, 49%, 100% { transform: scaleY(1); } 47% { transform: scaleY(0.08); } }
+@keyframes spec-alternate {
+  0%, 40% { transform: translate(-7px, -2px); }
+  50%, 90% { transform: translate(7px, -2px); }
+  100% { transform: translate(-7px, -2px); }
+}
+@keyframes spec-activate {
+  0% { transform: scale(0.96); }
+  35% { transform: translateY(-13px) scale(1.1) rotate(-5deg); filter: drop-shadow(0 0 9px #a78bfa); }
+  75% { transform: translateY(-3px) rotate(3deg); }
+  100% { transform: none; }
+}
+@keyframes spec-ack { 50% { transform: scale(1.06); } }
+
+/* Reduced motion: colours and faces still change, but nothing moves. */
+[data-motion='off'] .robot *,
+[data-motion='off'] .robot { animation: none !important; transition: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  .robot *, .robot { animation: none !important; transition: none !important; }
+}
