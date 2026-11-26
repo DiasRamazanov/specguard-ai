@@ -74,7 +74,7 @@ class Budget:
                     if db.execute("SELECT COUNT(*) FROM leases").fetchone()[0] >= self.concurrency:
                         raise IntelligenceError("provider_busy")
                     db.execute("UPDATE quota SET used=used+? WHERE id=1", (tokens,))
-                    db.execute("INSERT INTO leases VALUES (?,?)", (lease, now + 360))
+                    db.execute("INSERT INTO leases VALUES (?,?)", (lease, now + 600))
             except (OSError, sqlite3.Error):
                 raise IntelligenceError("budget_storage_unavailable") from None
             self.used += tokens
@@ -171,7 +171,10 @@ class DeepSeek:
             setting("SPECGUARD_CONCURRENCY", 2, 1, 8),
         )
         self.retries = setting("SPECGUARD_RETRIES", 1, 0, 2)
-        self.timeout = setting("SPECGUARD_TIMEOUT_SECONDS", 45, 1, 60)
+        self.timeout = setting("SPECGUARD_TIMEOUT_SECONDS", 120, 1, 180)
+        self.reasoning_effort = os.environ.get("SPECGUARD_REASONING_EFFORT", "high")
+        if self.reasoning_effort not in {"low", "high", "max"}:
+            raise IntelligenceError("invalid_provider_settings")
         self.max_calls = setting("SPECGUARD_RUN_CALLS", 64, 1, 128)
         self.records = []
         self._calls = 0
@@ -251,6 +254,8 @@ class DeepSeek:
         }
         if tier == "fast":
             body["temperature"] = 0
+        else:
+            body["reasoning_effort"] = self.reasoning_effort
         reserved = upper_input + max_output
         for attempt in range(1, self.retries + 2):
             with self._lock:

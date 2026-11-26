@@ -582,6 +582,14 @@ class Intelligence:
         )
         schema = json.dumps(output_type.model_json_schema(), ensure_ascii=False, separators=(",", ":"))
         system += "\nReturn JSON conforming to this output schema:\n" + schema
+        if hasattr(context, "requirements"):
+            system += (
+                "\nFor requirement_id and requirement_ids use only the provided internal registry IDs. "
+                "An empty registry permits only empty requirement_ids. Never substitute an original_id. "
+                "Copy exact contiguous quotes without normalizing punctuation or Markdown. "
+                "Keep criterion explanations concise and specific. For contradiction or conflict "
+                "include two distinct source quotations and a concrete conflict_scenario."
+            )
         messages = [
             {"role": "system", "content": system},
             {"role": "user", "content": context.model_dump_json(exclude_unset=False)},

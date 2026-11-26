@@ -293,6 +293,7 @@ def test_independent_thinking_calls(live, monkeypatch):
     initial, review = [c[1] for c in calls if c[1] is not None]
     assert initial["messages"][0] != review["messages"][0]
     assert len(review["messages"]) == 2 and review["thinking"] == {"type": "enabled"}
+    assert review["reasoning_effort"] == "high"
 
 
 @pytest.mark.parametrize(

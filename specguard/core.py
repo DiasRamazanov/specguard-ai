@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 from collections import defaultdict
@@ -425,6 +426,12 @@ def _global_pass(
     individual_candidates: Sequence[dict],
 ) -> tuple[list[dict], bool]:
     output = []
+    # The global role has a larger context budget than a single requirement pass.
+    # Keep linked specifications together when the actual serialized registry fits.
+    if not use_full_context and len(blocks) <= 500:
+        combined = _role_payload(blocks, requirements)
+        combined["candidates"] = list(individual_candidates[:32])
+        use_full_context = len(json.dumps(combined, ensure_ascii=False).encode("utf-8")) <= 240_000
     windows, complete = _global_windows(blocks, requirements, use_full_context)
     if not complete:
         limitations.append("Глобальный анализ ограничен по объёму: часть пар разделов не проверена.")
