@@ -24,7 +24,7 @@ npm run e2e          # Playwright: starts the offline backend + Vite if they are
 npm run build
 ```
 
-For e2e, `SPECGUARD_PYTHON` overrides the backend interpreter (default: `../.venv/bin/python`, or `..\.venv\Scripts\python.exe` on Windows).
+For e2e, `SPECGUARD_PYTHON` overrides the backend interpreter (default, relative to the repo root: `.venv/bin/python`, or `.venv\Scripts\python.exe` on Windows).
 
 ## Contract
 

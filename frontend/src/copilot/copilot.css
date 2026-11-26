@@ -22,7 +22,10 @@
 .context-bar .grow { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .reply, .question { padding: 10px 12px; border-radius: 11px; margin: 9px 0; line-height: 1.55; font-size: 13.5px; }
 .reply { background: #f6f2ff; border: 1px solid #e9e0fb; }
-.reply.intro { background: #fffbea; border-color: #f7e7a6; }
+.intro { display: flex; gap: 10px; align-items: center; margin: 10px 0; }
+.intro .robot { max-width: 54px; flex: none; }
+.intro .reply { margin: 0; flex: 1; }
+.intro .reply b { font-family: var(--font-heading); }
 .reply.pending { color: var(--deep); font-style: italic; }
 .reply.error { background: var(--critical-bg); border-color: #f6c9c9; color: #9b1c1c; display: flex; gap: 6px; align-items: flex-start; }
 .reply .who { display: block; font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: .04em; margin-bottom: 4px; }

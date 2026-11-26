@@ -24,9 +24,11 @@ interface Props {
   motionAllowed?: () => boolean
   className?: string
   title?: string
+  /** Purely decorative illustration: hidden from assistive technology. */
+  decorative?: boolean
 }
 
-export function SpecMascot({ state, gesture = null, gestureKey = 0, onGestureEnd, gazeRoot, motionAllowed, className, title }: Props) {
+export function SpecMascot({ state, gesture = null, gestureKey = 0, onGestureEnd, gazeRoot, motionAllowed, className, title, decorative }: Props) {
   const look = LOOKS[state]
   const clip = `spec-screen-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   const gazeRef = useRef<SVGGElement>(null)
@@ -69,8 +71,9 @@ export function SpecMascot({ state, gesture = null, gestureKey = 0, onGestureEnd
       shapeRendering="crispEdges"
       data-state={state}
       style={{ ['--led' as string]: look.led, ['--eye' as string]: look.eye }}
-      role="img"
-      aria-label={title ?? `SPEC: ${look.label}`}
+      role={decorative ? undefined : 'img'}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : (title ?? `SPEC: ${look.label}`)}
     >
       <g
         ref={gestureRef}

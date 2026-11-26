@@ -1,7 +1,7 @@
 import { Icon } from '../components/Icons'
 import { OfflineNotice } from '../components/ModeBadge'
 import { SEVERITY_LABELS, VERDICT_LABELS, criterionLabel, isContradiction } from '../labels'
-import { bySeverity, findingsById, type WorkspaceProps } from './shared'
+import { SEVERITY_COLOR, bySeverity, findingsById, type WorkspaceProps } from './shared'
 
 export function Verdict({ result }: Pick<WorkspaceProps, 'result'>) {
   const { verdict, rationale } = result.readiness
@@ -51,8 +51,8 @@ export function OverviewView(props: WorkspaceProps) {
 
   return (
     <div className="content">
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <h1 style={{ flex: 1 }}>Результаты аудита</h1>
+      <div className="page-head">
+        <h1>Результаты аудита</h1>
         {cov.complete ? (
           <span className="badge badge-success"><Icon name="check" size={13} /> Анализ завершён</span>
         ) : (
@@ -64,19 +64,19 @@ export function OverviewView(props: WorkspaceProps) {
 
       <div className="stats">
         <div className="card stat">
-          <span className="stat-icon"><Icon name="doc" /></span>
+          <span className="stat-icon"><Icon name="doc" size={30} /></span>
           <div><b>{result.requirements.length}</b><span>Требований</span></div>
         </div>
         <div className="card stat">
-          <span className="stat-icon warn"><Icon name="alert" /></span>
+          <span className="stat-icon warn"><Icon name="alert" size={30} /></span>
           <div><b>{result.findings.length}</b><span>Замечаний</span></div>
         </div>
         <div className="card stat">
-          <span className="stat-icon crit"><Icon name="shield" /></span>
+          <span className="stat-icon crit"><Icon name="shield" size={30} /></span>
           <div><b>{crit}</b><span>Критических</span></div>
         </div>
         <div className="card stat">
-          <span className="stat-icon"><Icon name="swap" /></span>
+          <span className="stat-icon"><Icon name="swap" size={30} /></span>
           <div><b>{contradictions}</b><span>Противоречий</span></div>
         </div>
       </div>
@@ -137,7 +137,7 @@ export function OverviewView(props: WorkspaceProps) {
             <div className="list">
               {priority.map((f) => (
                 <button key={f.finding_id} type="button" className="list-row" onClick={() => navigate(isContradiction(f) ? 'contradictions' : 'findings', f.finding_id)}>
-                  <Icon name="alert" size={18} style={{ color: f.severity === 'critical' ? 'var(--critical)' : 'var(--warning)', flex: 'none' }} />
+                  <Icon name="alert" size={18} style={{ color: SEVERITY_COLOR[f.severity], flex: 'none' }} />
                   <span className="grow"><span className="title">{f.title}</span></span>
                   <span className={`badge badge-${f.severity}`}>{SEVERITY_LABELS[f.severity]}</span>
                   <Icon name="chevron" size={16} className="chev" />

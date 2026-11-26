@@ -3,8 +3,8 @@ import type { Severity } from '../api/types'
 import { EvidenceList } from '../components/Evidence'
 import { Icon } from '../components/Icons'
 import { SpecMascot } from '../mascot/SpecMascot'
-import { FINDING_STATUS_LABELS, SEVERITY_LABELS, SEVERITY_ORDER, criterionLabel, isContradiction } from '../labels'
-import { bySeverity, requirementLabel, requirementsById, type WorkspaceProps } from './shared'
+import { FINDING_STATUS_LABELS, SEVERITY_LABELS, SEVERITY_ORDER, criterionLabel, isContradiction, shortId } from '../labels'
+import { SEVERITY_COLOR, bySeverity, displaySummary, requirementLabel, requirementsById, type WorkspaceProps } from './shared'
 
 type Tab = 'analysis' | 'impact' | 'recommendation' | 'source'
 
@@ -55,7 +55,7 @@ export function FindingsView(props: WorkspaceProps & { selectedId?: string; cont
                   navigate(view, f.finding_id)
                 }}
               >
-                <Icon name={isContradiction(f) ? 'swap' : 'alert'} size={18} style={{ flex: 'none', color: f.severity === 'critical' ? 'var(--critical)' : 'var(--warning)' }} />
+                <Icon name={isContradiction(f) ? 'swap' : 'alert'} size={18} style={{ flex: 'none', color: SEVERITY_COLOR[f.severity] }} />
                 <span className="grow">
                   <span className="title">{f.title}</span>
                   <span className="sub">
@@ -73,27 +73,36 @@ export function FindingsView(props: WorkspaceProps & { selectedId?: string; cont
             <p className="empty">Выберите замечание, чтобы увидеть доказательства и рекомендации.</p>
           ) : (
             <>
-              <div className="detail-head">
-                <h2>{selected.title}</h2>
-                <span className={`badge badge-${selected.severity}`}>{SEVERITY_LABELS[selected.severity]}</span>
+              <div className="detail-kicker">
+                <span className="mono" title={selected.finding_id}>{shortId(selected.finding_id).toUpperCase()}</span>
+                <span className={`badge badge-${selected.severity}`}>
+                  <Icon name="alert" size={13} /> {SEVERITY_LABELS[selected.severity]}
+                </span>
               </div>
-              <div className="detail-meta">
+              <h2 style={{ fontSize: 21 }}>{selected.title}</h2>
+              <div className="detail-sub">
+                {pairReqs.length > 0 && (
+                  <>
+                    <span className="mono">{pairReqs.map(requirementLabel).join(' ↔ ')}</span>
+                    <span className="sep" aria-hidden="true" />
+                  </>
+                )}
                 <span>{criterionLabel(selected.criterion)}</span>
+                <span className="sep" aria-hidden="true" />
                 <span>{selected.scope === 'global' ? 'Общая проверка' : 'Отдельное требование'}</span>
                 <span className="badge badge-neutral">{FINDING_STATUS_LABELS[selected.status]}</span>
-                <span className="mono">{selected.finding_id}</span>
               </div>
 
               {pairReqs.length >= 2 && (
-                <div className="compare-pair" style={{ marginBottom: 14 }}>
-                  <button type="button" className="evidence" onClick={() => navigate('requirements', pairReqs[0].requirement_id)}>
-                    <span className="badge badge-neutral mono">{requirementLabel(pairReqs[0])}</span>
-                    <p style={{ marginTop: 6 }}>{pairReqs[0].summary}</p>
+                <div className="compare-pair" style={{ marginBottom: 16 }}>
+                  <button type="button" className="pair-card" onClick={() => navigate('requirements', pairReqs[0].requirement_id)}>
+                    <span className="id-pill">{requirementLabel(pairReqs[0])}</span>
+                    <p style={{ marginTop: 8 }}>{displaySummary(pairReqs[0])}</p>
                   </button>
                   <span className="swap" aria-hidden="true"><Icon name="swap" /></span>
-                  <button type="button" className="evidence" onClick={() => navigate('requirements', pairReqs[1].requirement_id)}>
-                    <span className="badge badge-neutral mono">{requirementLabel(pairReqs[1])}</span>
-                    <p style={{ marginTop: 6 }}>{pairReqs[1].summary}</p>
+                  <button type="button" className="pair-card" onClick={() => navigate('requirements', pairReqs[1].requirement_id)}>
+                    <span className="id-pill">{requirementLabel(pairReqs[1])}</span>
+                    <p style={{ marginTop: 8 }}>{displaySummary(pairReqs[1])}</p>
                   </button>
                 </div>
               )}
@@ -116,8 +125,8 @@ export function FindingsView(props: WorkspaceProps & { selectedId?: string; cont
               <div role="tabpanel">
                 {tab === 'analysis' && (
                   <div className="insight">
-                    <SpecMascot state="idle" title="SPEC" />
-                    <div>
+                    <SpecMascot state="idle" decorative />
+                    <div className="bubble">
                       <p>{selected.explanation}</p>
                       {selected.conflict_scenario && <p style={{ marginTop: 8 }}><b>Сценарий конфликта:</b> {selected.conflict_scenario}</p>}
                       {selected.uncertainty && <p className="small" style={{ marginTop: 8, opacity: 0.8 }}>Неопределённость: {selected.uncertainty}</p>}
