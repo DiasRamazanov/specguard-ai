@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SpecGuard AI — презентация</title>
+<style>
+@font-face { font-family: Manrope; font-weight: 800; src: url(fonts/manrope-cyrillic-800-normal.woff2) format('woff2'); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Manrope; font-weight: 800; src: url(fonts/manrope-latin-800-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: Manrope; font-weight: 700; src: url(fonts/manrope-cyrillic-700-normal.woff2) format('woff2'); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Manrope; font-weight: 700; src: url(fonts/manrope-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-cyrillic-400-normal.woff2) format('woff2'); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Inter; font-weight: 400; src: url(fonts/inter-latin-400-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-cyrillic-600-normal.woff2) format('woff2'); unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+@font-face { font-family: Inter; font-weight: 600; src: url(fonts/inter-latin-600-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+2000-206F, U+2190-21FF; }
+@font-face { font-family: 'JetBrains Mono'; src: url(fonts/jetbrains-mono-latin-400-normal.woff2) format('woff2'); }
+
+:root { --p:#7828EE; --deep:#5521CA; --lav:#EAE3FC; --bg:#F7F6FC; --ink:#111322; --sec:#55546a; --mut:#8b879c; --line:#e7e1f3; }
+/* Static deck: no animations or transitions anywhere. */
+*, *::before, *::after { box-sizing: border-box; animation: none !important; transition: none !important; }
+html, body { margin: 0; height: 100%; background: #1c1630; }
+body { font-family: Inter, system-ui, sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.deck { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; }
+.slide {
+  position: absolute; width: 1920px; height: 1080px; padding: 96px 120px; overflow: hidden;
+  background: radial-gradient(1100px 640px at 85% -10%, #ebe2ff 0%, transparent 60%), var(--bg);
+  display: none; flex-direction: column;
+}
+.slide.on { display: flex; }
+.slide::after { content: attr(data-n) ' / 10'; position: absolute; right: 120px; bottom: 54px; font: 600 22px Inter; color: var(--mut); }
+.brand { position: absolute; left: 120px; bottom: 50px; display: flex; gap: 12px; align-items: center; font: 800 24px Manrope; letter-spacing: -.02em; }
+.brand svg { width: 30px; height: 30px; }
+.brand span { color: var(--p); }
+h1, h2, h3 { font-family: Manrope, Inter, sans-serif; margin: 0; letter-spacing: -.025em; }
+h1 { font-size: 104px; line-height: 1.02; font-weight: 800; }
+h2 { font-size: 60px; line-height: 1.08; font-weight: 800; margin-bottom: 30px; }
+h3 { font-size: 32px; font-weight: 700; margin-bottom: 10px; }
+.kicker { align-self: flex-start; background: var(--lav); color: var(--deep); font: 700 22px Inter; padding: 10px 20px; border-radius: 999px; margin-bottom: 24px; }
+.lead { font-size: 32px; line-height: 1.45; color: var(--sec); }
+.ai { color: var(--p); }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.grid { display: grid; gap: 28px; }
+.g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 26px; padding: 32px 34px; box-shadow: 0 18px 50px #3a1f7a12; }
+.card p, .card li { font-size: 26px; line-height: 1.45; color: var(--sec); margin: 0; }
+.card ul { margin: 0; padding-left: 28px; } .card li + li { margin-top: 8px; }
+.card b { color: var(--ink); }
+.big { font: 800 84px/1 Manrope; letter-spacing: -.03em; }
+.big small { font-size: 40px; color: var(--mut); }
+.cap { font-size: 24px; color: var(--sec); margin-top: 10px; line-height: 1.35; }
+.shot { border-radius: 22px; border: 1px solid var(--line); box-shadow: 0 30px 80px #3a1f7a26; width: 100%; display: block; }
+.tag { display: inline-block; font: 600 20px Inter; padding: 6px 14px; border-radius: 10px; background: var(--lav); color: var(--deep); }
+.tag.crit { background: #fdecec; color: #b42020; } .tag.warn { background: #fef3dc; color: #9a5b00; } .tag.min { background: #fdf6d8; color: #806000; }
+.note { font-size: 22px; color: var(--mut); line-height: 1.4; }
+.honest { background: #fff8e6; border: 1px solid #f3dca2; color: #6b4600; border-radius: 20px; padding: 22px 28px; font-size: 25px; line-height: 1.45; }
+.split { display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px; align-items: center; flex: 1; }
+.hud { position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%); color: #cfc6ee; font: 13px Inter; opacity: .7; }
+html.export .hud { display: none; }
+@media print {
+  @page { size: 1920px 1080px; margin: 0; }
+  html, body { background: none; }
+  .deck { position: static; display: block; }
+  .slide { display: flex !important; position: relative; transform: none !important; break-after: page; }
+  .hud { display: none; }
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="bm" x1="4" y1="3" x2="28" y2="29" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#a96bff"/><stop offset=".55" stop-color="#7828ee"/><stop offset="1" stop-color="#5521ca"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 32 32"><path d="M25 5.5H12.5L6.5 11.5L12.5 17.5H19.5L25.5 23.5L19.5 29.5" fill="none" stroke="url(#bm)" stroke-width="5.2" stroke-linejoin="round" stroke-linecap="round"/><path d="M6.5 26.5H14" fill="none" stroke="url(#bm)" stroke-width="5.2" stroke-linecap="round" opacity=".55"/></symbol>
+    <symbol id="spec" viewBox="0 0 160 150">
+      <path d="M72 43V28H85V43Z" fill="#7aa7c8" stroke="#11152d" stroke-width="4"/><path d="M58 6H94V12H100V31H94V36H58Z" fill="#fff" stroke="#11152d" stroke-width="4"/><path d="M65 13H89V17H65ZM65 22H77V25H65Z" fill="#a8b6d6"/><path d="M79 25L85 31L97 18" stroke="#11152d" stroke-width="6" fill="none"/><path d="M79 25L85 31L97 18" stroke="#facc15" stroke-width="3" fill="none"/>
+      <path d="M24 66H12V73H7V103H12V112H28ZM136 66H148V73H153V103H148V112H132Z" fill="#e8a11b" stroke="#11152d" stroke-width="5"/><path d="M43 37H117V43H130V53H139V65H145V120H138V132H127V139H33V132H22V120H15V65H21V53H30V43H43Z" fill="#f8fdff" stroke="#101329" stroke-width="5"/><path d="M129 51H137V64H142V119H134V130H124V137H37V131H122V124H130V115H135V68H129Z" fill="#85b5d6"/><path d="M43 52H117V58H127V69H133V116H126V125H116V131H44V125H34V116H27V69H33V58H43Z" fill="#f9c72e" stroke="#68340e" stroke-width="4"/><path d="M43 55H116V61H125V70H130V79H124V68H115V62H44V67H35V78H30V68H36V60H43Z" fill="#fff17c"/><path fill="#facc15" d="M43 65H117V71H123V113H117V121H43V115H37V73H43Z"/><path d="M47 70H113V75H118V109H112V116H48V110H42V76H47Z" fill="#07142d" stroke="#101329" stroke-width="3"/><path d="M48 76H110V88L48 96Z" fill="#24445b" opacity=".7"/><path d="M48 84V78H54V75H64V79H55V84Z" fill="#89f5ff" opacity=".65"/>
+      <rect x="56" y="87" width="11" height="10" rx="1" fill="#b4faff"/><rect x="92" y="87" width="11" height="10" rx="1" fill="#b4faff"/><path d="M72 103V110H88V103" stroke="#b4faff" stroke-width="3" fill="none"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="deck">
+
+<!-- 1. Титул -->
+<section class="slide" data-n="1">
+  <div style="font:600 26px Inter;color:var(--sec);margin-bottom:46px">BCC-HUB × MNU FinTech Hackathon · 2026</div>
+  <div class="kicker">AI-агент проверки требований</div>
+  <h1>SpecGuard <span class="ai">AI</span></h1>
+  <p class="lead" style="margin-top:30px;max-width:980px">Находит противоречия, пропуски и риски в технических заданиях <b style="color:var(--ink)">до начала разработки</b> — и подкрепляет каждое замечание цитатой из документа.</p>
+  <svg viewBox="0 0 160 150" style="position:absolute;right:140px;top:200px;width:520px;height:488px"><use href="#spec"/></svg>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 2. Проблема -->
+<section class="slide" data-n="2">
+  <div class="kicker">Проблема</div>
+  <h2>Дефект в ТЗ дешевле всего исправить <span class="ai">до первой строки кода</span></h2>
+  <div class="grid g3">
+    <div class="card"><h3>Противоречия</h3><p>Разделы задают несовместимые правила: лимиты, частоту уведомлений, коды API.</p></div>
+    <div class="card"><h3>Непроверяемость</h3><p>«Быстро», «удобно», «TBD» — по такой формулировке нельзя написать тест.</p></div>
+    <div class="card"><h3>Пропуски</h3><p>Нет ошибки, маршрута или контракта — каждая команда додумывает своё.</p></div>
+  </div>
+  <div class="honest" style="margin-top:36px"><b>Реальные дефекты выданного ТЗ, найденные агентом:</b> повторная отправка push, GET, изменяющий состояние, конфликт 200/400 для неверной суммы, несоответствие 403/404, отсутствующий production-маршрут.</div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 3. Продукт -->
+<section class="slide" data-n="3">
+  <div class="kicker">Продукт</div>
+  <div class="split">
+    <div>
+      <h2>Аудит ТЗ с доказательствами</h2>
+      <ul class="lead" style="padding-left:30px;font-size:29px;margin:0">
+        <li>Загрузка PDF / Markdown / TXT</li>
+        <li>Реестр требований со стабильными ID</li>
+        <li>Проверка каждого требования и всего набора</li>
+        <li>Противоречия, пропуски, вопросы на уточнение</li>
+        <li>Вердикт готовности и приоритеты</li>
+        <li>Русский отчёт: CLI и веб-интерфейс</li>
+      </ul>
+    </div>
+    <img class="shot" src="img/03-overview.jpg" alt="Обзор результатов аудита" />
+  </div>
+  <p class="note" style="margin-top:12px">Скриншот реального приложения: офлайн-режим, синтетический документ.</p>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 4. Архитектура и модели -->
+<section class="slide" data-n="4">
+  <div class="kicker">Архитектура</div>
+  <h2>Один аудит-сервис для CLI и веба</h2>
+  <svg viewBox="0 0 1680 300" style="width:100%" font-family="Inter" font-size="20">
+    <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0L10 5L0 10z" fill="#7828EE"/></marker></defs>
+    <g fill="#fff" stroke="#d9cdf6" stroke-width="2">
+      <rect x="0" y="95" width="240" height="110" rx="18"/><rect x="290" y="95" width="250" height="110" rx="18"/>
+      <rect x="590" y="20" width="300" height="100" rx="18"/><rect x="590" y="180" width="300" height="100" rx="18"/>
+      <rect x="940" y="95" width="300" height="110" rx="18"/><rect x="1290" y="95" width="390" height="110" rx="18"/>
+    </g>
+    <g fill="#111322" font-weight="700" font-family="Manrope" font-size="24" text-anchor="middle">
+      <text x="120" y="143">Веб · CLI</text><text x="415" y="143">Разбор документа</text>
+      <text x="740" y="62">Правила</text><text x="740" y="222">Роли DeepSeek</text>
+      <text x="1090" y="143">Критик</text><text x="1485" y="143">Проверка цитат → отчёт</text>
+    </g>
+    <g fill="#55546a" text-anchor="middle">
+      <text x="120" y="175">REST · сессии</text><text x="415" y="175">MD · PDF в песочнице</text>
+      <text x="740" y="94">ID, API, границы</text><text x="740" y="254">схемы ответов</text>
+      <text x="1090" y="175">отдельный вызов</text><text x="1485" y="175">покрытие · вердикт · RU</text>
+    </g>
+    <g stroke="#7828EE" stroke-width="3" fill="none" marker-end="url(#a)">
+      <path d="M240 150H288"/><path d="M540 140 C 565 140, 565 70, 588 70"/><path d="M540 160 C 565 160, 565 230, 588 230"/>
+      <path d="M890 70 C 915 70, 915 140, 938 140"/><path d="M890 230 C 915 230, 915 160, 938 160"/><path d="M1240 150H1288"/>
+    </g>
+  </svg>
+  <div class="grid g2" style="margin-top:30px">
+    <div class="card"><h3 class="mono" style="font-size:28px">deepseek-flash</h3><p>Извлечение требований, простые вопросы Copilot</p></div>
+    <div class="card"><h3 class="mono" style="font-size:28px">deepseek-v4-pro · thinking</h3><p>Проверка требований и набора, критик, риск, черновики, сравнение</p></div>
+  </div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 5. Защита от ошибок модели -->
+<section class="slide" data-n="5">
+  <div class="kicker">Надёжность</div>
+  <h2>Четыре барьера против галлюцинаций</h2>
+  <div class="grid g4">
+    <div class="card"><h3>1. Правила</h3><p>Детерминированные проверки без модели: ID, ссылки, TBD, HTTP, числовые границы</p></div>
+    <div class="card"><h3>2. Схемы</h3><p>Каждый ответ роли проверяется по JSON-схеме и сверяется с ID входа</p></div>
+    <div class="card"><h3>3. Критик</h3><p>Отдельный вызов пытается опровергнуть каждую находку</p></div>
+    <div class="card"><h3>4. Цитаты</h3><p>Нет дословной цитаты с координатами — нет находки</p></div>
+  </div>
+  <div class="honest" style="margin-top:36px">Проверка цитат подтверждает, <b>что текст существует в документе</b>, но не то, что вывод модели семантически верен. Без модели покрытие помечается как неполное, вердикт не выдумывается.</div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 6. Copilot и исправления -->
+<section class="slide" data-n="6">
+  <div class="kicker">SPEC Copilot</div>
+  <div class="split" style="grid-template-columns:1.25fr 1fr">
+    <img class="shot" src="img/07-copilot.jpg" alt="SPEC Copilot"/>
+    <div>
+      <h2>Помощник с источниками, решения — за человеком</h2>
+      <ul class="lead" style="padding-left:30px;font-size:27px;margin:0">
+        <li>Ответы со ссылками на цитаты</li>
+        <li>Несколько вложений: контекст, сравнение, новая редакция</li>
+        <li>Черновик правки: было, стало, допущения, приёмочные тесты</li>
+        <li>Правку одобряет только человек, исходный аудит не меняется</li>
+      </ul>
+    </div>
+  </div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 7. Безопасность -->
+<section class="slide" data-n="7">
+  <div class="kicker">Безопасность</div>
+  <h2>Банковский документ — это данные, а не команды</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Изоляция</h3><p>Сессия владеет своими документами; чужая сессия получает 404. Данные в памяти, не дольше часа.</p></div>
+    <div class="card"><h3>Внешняя обработка</h3><p>Офлайн по умолчанию. Живой режим — согласие пользователя и включение на сервере. Ключ только на сервере.</p></div>
+    <div class="card"><h3>Ввод</h3><p>PDF разбирается в изолированном процессе. Лимиты размера и сессий. Текст для модели — недоверенный.</p></div>
+  </div>
+  <div class="honest" style="margin-top:36px;background:#eef9f1;border-color:#bfe8cb;color:#14532d"><b>Независимая проверка:</b> 20 из 20 проб безопасности и изоляции пройдены (локально, офлайн-режим).</div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 8. Результаты -->
+<section class="slide" data-n="8">
+  <div class="kicker">Результаты на выданном ТЗ</div>
+  <h2>Официальный прогон с DeepSeek</h2>
+  <div class="grid g4">
+    <div class="card"><div class="big">54<small>/54</small></div><p class="cap">требования оценены</p></div>
+    <div class="card"><div class="big">124<small>/124</small></div><p class="cap">блока источника просмотрены</p></div>
+    <div class="card"><div class="big">12</div><p class="cap">подтверждённых находок<br/><span class="tag crit">2 крит.</span> <span class="tag warn">5 высок.</span> <span class="tag min">5 сред.</span></p></div>
+    <div class="card"><div class="big">176</div><p class="cap">доказательств проверено по оригиналу</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="card"><h3>Семантическая точность — <span class="ai">5 из 9</span></h3><p>по заранее зафиксированному чек-листу; 2 — частично, 2 — пропущены. Один документ, оценка не исчерпывающая.</p></div>
+    <div class="card"><h3>Прогон</h3><p>45 вопросов на уточнение, вердикт «требуется доработка». 288 860 входных и 336 317 выходных токенов по всем попыткам.</p></div>
+  </div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 9. Ценность и ограничения -->
+<section class="slide" data-n="9">
+  <div class="kicker">Ценность и ограничения</div>
+  <h2>Что получает банк — и чего пока нет</h2>
+  <div class="grid g2">
+    <div class="card"><h3>Ценность</h3><ul><li>Дефекты видны до разработки</li><li>Каждое замечание проверяемо по цитате</li><li>Готовые вопросы заинтересованным сторонам</li><li>Воспроизводимый отчёт с паспортом прогона</li></ul></div>
+    <div class="card"><h3>Ограничения</h3><ul><li>Точность измерена на одном документе (5/9)</li><li>Нет OCR; PDF — только Linux/macOS</li><li>Один процесс, сессии в памяти</li><li>Публичный доступ требует авторизации</li></ul></div>
+  </div>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+<!-- 10. Итог -->
+<section class="slide" data-n="10">
+  <div class="kicker">Итог</div>
+  <h1 style="font-size:88px;max-width:1150px">Требования, проверенные <span class="ai">до разработки</span></h1>
+  <div class="grid g3" style="margin-top:56px;max-width:1200px">
+    <div class="card"><p><b>Находит</b> противоречия, пропуски и непроверяемые формулировки</p></div>
+    <div class="card"><p><b>Доказывает</b> каждое замечание цитатой из документа</p></div>
+    <div class="card"><p><b>Помогает</b> исправить — под контролем человека</p></div>
+  </div>
+  <p class="lead" style="margin-top:50px;max-width:1150px">Дальше: отложенная оценка точности, OCR, авторизация и пилот на внутренних ТЗ банка.</p>
+  <svg viewBox="0 0 160 150" style="position:absolute;right:140px;bottom:130px;width:400px;height:375px"><use href="#spec"/></svg>
+  <div class="brand"><svg><use href="#logo"/></svg>SpecGuard <span>AI</span></div>
+</section>
+
+</div>
+<div class="hud">← → листать · F — полный экран · печать в PDF: Ctrl+P</div>
+<script>
+  if (new URLSearchParams(location.search).has('export')) document.documentElement.classList.add('export')
+  const slides = [...document.querySelectorAll('.slide')]
+  let i = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.slice(1)) || 1) - 1))
+  const fit = () => { const s = Math.min(innerWidth / 1920, innerHeight / 1080); slides.forEach((el) => (el.style.transform = `scale(${s})`)) }
+  const show = (n) => { i = Math.max(0, Math.min(slides.length - 1, n)); slides.forEach((el, k) => el.classList.toggle('on', k === i)); history.replaceState(null, '', '#' + (i + 1)) }
+  addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'PageDown', ' '].includes(e.key)) show(i + 1)
+    if (['ArrowLeft', 'PageUp'].includes(e.key)) show(i - 1)
+    if (e.key === 'Home') show(0)
+    if (e.key === 'End') show(slides.length - 1)
+    if (e.key === 'f' || e.key === 'F') document.documentElement.requestFullscreen?.()
+  })
+  addEventListener('resize', fit)
+  fit(); show(i)
+</script>
+</body>
+</html>
