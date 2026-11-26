@@ -1,0 +1,135 @@
+{
+  "fixture": "mock",
+  "source": "Synthetic fixture processed by the offline validator",
+  "result": {
+    "audit_id": "12cf545f2f5844dead7abb9e03e020e2",
+    "created_at": "2026-11-26T02:04:07.002119Z",
+    "agent_version": "0.1.0",
+    "model": "Без модели",
+    "mode": "offline",
+    "documents": [
+      {
+        "document_id": "doc-c4786343c562241dd268b916",
+        "filename": "placeholder.md",
+        "format": "markdown",
+        "sha256": "c4786343c562241dd268b916179586950b1c272e3ff17c63dbadf8290c80b98a",
+        "size_bytes": 148,
+        "page_count": null,
+        "warnings": []
+      }
+    ],
+    "requirements": [
+      {
+        "requirement_id": "req-c29fe7eddf210f29c9dc2aa6",
+        "document_id": "doc-c4786343c562241dd268b916",
+        "original_id": "SG-501",
+        "summary": "- SG-501: Система должна хранить журнал операций в течение TBD дней.",
+        "kind": "functional",
+        "section": "Журнал операций",
+        "evidence": [
+          {
+            "evidence_id": "ev-8a36aa30673649c06104dedf",
+            "kind": "quote",
+            "location": {
+              "document_id": "doc-c4786343c562241dd268b916",
+              "block_id": "l3-3-19",
+              "section": "Журнал операций",
+              "page": null,
+              "line_start": 3,
+              "line_end": 3,
+              "char_start": 19,
+              "char_end": 87,
+              "bbox": null
+            },
+            "quote": "- SG-501: Система должна хранить журнал операций в течение TBD дней.",
+            "scope": null
+          }
+        ],
+        "relationships": [],
+        "uncertainty": "Извлечение по структуре и формальным признакам."
+      }
+    ],
+    "assessments": [
+      {
+        "requirement_id": "req-c29fe7eddf210f29c9dc2aa6",
+        "status": "offline",
+        "criteria": [],
+        "finding_ids": [
+          "finding-4bd4dbf46e4b2399fb3a888c"
+        ],
+        "uncertainty": null
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "finding-4bd4dbf46e4b2399fb3a888c",
+        "kind": "unfilled_placeholder",
+        "scope": "individual",
+        "title": "В спецификации остался заполнитель",
+        "explanation": "В указанном фрагменте значение или часть требований отложены на будущее.",
+        "criterion": "completeness",
+        "severity": "minor",
+        "status": "confirmed",
+        "document_ids": [
+          "doc-c4786343c562241dd268b916"
+        ],
+        "requirement_ids": [
+          "req-c29fe7eddf210f29c9dc2aa6"
+        ],
+        "evidence": [
+          {
+            "evidence_id": "ev-583863eeccc3f10944509064",
+            "kind": "quote",
+            "location": {
+              "document_id": "doc-c4786343c562241dd268b916",
+              "block_id": "l3-3-19",
+              "section": "Журнал операций",
+              "page": null,
+              "line_start": 3,
+              "line_end": 3,
+              "char_start": 78,
+              "char_end": 81,
+              "bbox": null
+            },
+            "quote": "TBD",
+            "scope": null
+          }
+        ],
+        "impact": "Команда не получает исходных данных для реализации или проверки этого условия.",
+        "recommendation": "Уточнить значение либо явно исключить пункт из текущего объёма работ.",
+        "uncertainty": "Формальная проверка.",
+        "conflict_scenario": null,
+        "review_explanation": null,
+        "counterevidence": []
+      }
+    ],
+    "rejected_candidates": [],
+    "readiness": {
+      "verdict": "unable_to_determine",
+      "rationale": "Проверка не завершена. Обнаруженные дефекты доступны для исправления.",
+      "confirmed_by_severity": {
+        "critical": 0,
+        "major": 0,
+        "minor": 1,
+        "informational": 0
+      },
+      "clarification_count": 0,
+      "priority_finding_ids": [
+        "finding-4bd4dbf46e4b2399fb3a888c"
+      ]
+    },
+    "coverage": {
+      "source_blocks": 2,
+      "extraction_blocks_reviewed": 0,
+      "requirements": 1,
+      "individually_assessed": 0,
+      "global_pass_complete": false,
+      "critic_complete": false,
+      "complete": false
+    },
+    "usage": [],
+    "limitations": [
+      "Локальный режим: выполнены формальные проверки. Семантическая проверка не проводилась."
+    ]
+  }
+}

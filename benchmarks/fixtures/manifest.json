@@ -1,0 +1,248 @@
+{
+  "version": "2026-11-26.1",
+  "cases": [
+    {
+      "id": "duplicate-id",
+      "documents": [
+        "duplicate-id.md"
+      ],
+      "requirements": [
+        "SG-101",
+        "SG-101"
+      ],
+      "positives": [
+        "duplicate_id"
+      ],
+      "negative_controls": [
+        "undefined_reference"
+      ],
+      "anchors": {
+        "duplicate_id": [
+          {
+            "document": "duplicate-id.md",
+            "quote_fragment": "Система должна сохранять время постановки"
+          },
+          {
+            "document": "duplicate-id.md",
+            "quote_fragment": "Система должна отправлять уведомление"
+          }
+        ]
+      }
+    },
+    {
+      "id": "distinct-ids",
+      "documents": [
+        "distinct-ids.md"
+      ],
+      "requirements": [
+        "SG-101",
+        "SG-102"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "duplicate_id",
+        "undefined_reference"
+      ],
+      "anchors": {}
+    },
+    {
+      "id": "unresolved-reference",
+      "documents": [
+        "unresolved-reference.md"
+      ],
+      "requirements": [
+        "SG-201"
+      ],
+      "positives": [
+        "undefined_reference"
+      ],
+      "negative_controls": [
+        "duplicate_id"
+      ],
+      "anchors": {
+        "undefined_reference": [
+          {
+            "document": "unresolved-reference.md",
+            "quote_fragment": "согласно SG-409"
+          }
+        ]
+      }
+    },
+    {
+      "id": "resolved-reference",
+      "documents": [
+        "resolved-reference.md"
+      ],
+      "requirements": [
+        "SG-201",
+        "SG-409"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "undefined_reference"
+      ],
+      "anchors": {}
+    },
+    {
+      "id": "state-changing-get",
+      "documents": [
+        "state-changing-get.md"
+      ],
+      "requirements": [
+        "SG-301"
+      ],
+      "positives": [
+        "state_changing_get"
+      ],
+      "negative_controls": [
+        "http_status_mismatch"
+      ],
+      "anchors": {
+        "state_changing_get": [
+          {
+            "document": "state-changing-get.md",
+            "quote_fragment": "GET /notifications/{id} должен удалять"
+          }
+        ]
+      }
+    },
+    {
+      "id": "read-only-get",
+      "documents": [
+        "read-only-get.md"
+      ],
+      "requirements": [
+        "SG-301"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "state_changing_get",
+        "http_status_mismatch"
+      ],
+      "anchors": {}
+    },
+    {
+      "id": "wrong-status",
+      "documents": [
+        "wrong-status.md"
+      ],
+      "requirements": [
+        "SG-401"
+      ],
+      "positives": [
+        "http_status_mismatch"
+      ],
+      "negative_controls": [
+        "state_changing_get"
+      ],
+      "anchors": {
+        "http_status_mismatch": [
+          {
+            "document": "wrong-status.md",
+            "quote_fragment": "404 OK"
+          }
+        ]
+      }
+    },
+    {
+      "id": "correct-status",
+      "documents": [
+        "correct-status.md"
+      ],
+      "requirements": [
+        "SG-401"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "state_changing_get",
+        "http_status_mismatch"
+      ],
+      "anchors": {}
+    },
+    {
+      "id": "placeholder",
+      "documents": [
+        "placeholder.md"
+      ],
+      "requirements": [
+        "SG-501"
+      ],
+      "positives": [
+        "unfilled_placeholder"
+      ],
+      "negative_controls": [
+        "undefined_reference"
+      ],
+      "anchors": {
+        "unfilled_placeholder": [
+          {
+            "document": "placeholder.md",
+            "quote_fragment": "TBD"
+          }
+        ]
+      }
+    },
+    {
+      "id": "filled-value",
+      "documents": [
+        "filled-value.md"
+      ],
+      "requirements": [
+        "SG-501"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "unfilled_placeholder"
+      ],
+      "anchors": {}
+    },
+    {
+      "id": "cross-document-conflict",
+      "documents": [
+        "batch-minimum.md",
+        "batch-low-maximum.md"
+      ],
+      "requirements": [
+        "SG-601",
+        "SG-602"
+      ],
+      "positives": [
+        "contradiction"
+      ],
+      "negative_controls": [
+        "duplicate_id",
+        "inconsistent_unit"
+      ],
+      "anchors": {
+        "contradiction": [
+          {
+            "document": "batch-minimum.md",
+            "quote_fragment": "не менее 40"
+          },
+          {
+            "document": "batch-low-maximum.md",
+            "quote_fragment": "не более 20"
+          }
+        ]
+      }
+    },
+    {
+      "id": "cross-document-compatible",
+      "documents": [
+        "batch-minimum.md",
+        "batch-high-maximum.md"
+      ],
+      "requirements": [
+        "SG-601",
+        "SG-602"
+      ],
+      "positives": [],
+      "negative_controls": [
+        "contradiction",
+        "duplicate_id",
+        "inconsistent_unit"
+      ],
+      "anchors": {}
+    }
+  ]
+}

@@ -19,3 +19,33 @@ The desktop spawn tool in this existing chat exposes explicit model/effort overr
 | Lead | Existing desktop session | Initialized Git and isolated worktree, installed dependencies, exported REST contract and schemas. |
 
 Foundation checks: `python -m scripts.export_contracts` succeeded using the project venv. App-server configuration read confirmed the project layer and three-child limit. Role files, contracts and fixtures are local. Per-agent token consumption unavailable. Final results, checks and release gates follow below.
+
+## Frontend start point
+
+The shared local repository is `/Users/diasramazanov/Downloads/MNU HACK`. Its primary checkout is `main`. Core development uses `.worktrees/core-engine` on `feat/core-engine`. There is no configured Git remote. Claude Code on this Mac can open the frontend worktree; a separate machine needs an explicitly shared copy or team-owned remote. The organizer repository is a source of requirements.
+
+The shared foundation commit is `b8bc02d28b73672f6919a1d94a0463f09f46bf96`. The provider commit is `93d1cbf51ecd00ecb64159db5dc7351783f8580b`. The integration commit that contains this section adds the runnable backend, refreshed OpenAPI and schemas, and both mock fixtures. Read `docs/architecture.md` and `contracts/openapi.json`. Source design PNGs are untracked at the shared repository root and can be read there from either worktree. Create UI files on the frontend branch only.
+
+```bash
+cd '/Users/diasramazanov/Downloads/MNU HACK'
+git worktree add -b feat/frontend .worktrees/frontend main
+cd .worktrees/frontend
+git status --short --branch
+```
+
+The creation command is one-time. For an existing frontend checkout, use only the second cd from the repository root.
+
+## Integration and review
+
+| Actual assignment | Model / effort | Result |
+| --- | --- | --- |
+| AI integration engineer | gpt-6.2-astra / high | Committed nine versioned prompts, paired schemas, bounded transport, durable quota ledger and offline tests. 55 provider tests passed. |
+| Backend engineer | gpt-6.2-sol / high | Implemented Markdown/PDF ingestion, individual/global/critic orchestration, deterministic checks, reporting and CLI. Session reached its usage limit before final review. |
+| Test engineer | gpt-6.2-sol / medium | Built a 12-case synthetic benchmark and CLI/PDF regression suite. Submitted measurements before the account limit interrupted its final turn. |
+| Security reviewer | gpt-6.2-astra / high | Reviewed source, ran 55 tests and pip check. Raised parser allocation, strict consent, primary comparison sources and deterministic finding suppression for lead review. |
+| Principal architect | gpt-6.2-astra / xhigh | Dispatch accepted; account usage limit prevented execution. No architectural review or conclusions can be attributed to this agent. Lead retained the review. |
+| Lead | Existing session | Integrated session-owned API, scoped Copilot, comparison and approval-only revision drafts. Added isolated PDF parsing, strict consent and primary-document comparison citations. Verified the six role descriptions in native Codex prompt metadata. All eight project skills passed quick_validate. |
+
+At frontend handoff, `python -m pytest -q` passed 90 tests with six dependency deprecation warnings. `python -m scripts.export_contracts` completed; the suite matches the generated OpenAPI to the live routes. No external model calls or purchases occurred. Per-worker Codex token totals are unavailable. The account reported a usage ceiling during the architect dispatch. The lead continued offline integration without switching the active model.
+
+DeepSeek account model access, live semantic benchmark, the final official report and frontend integration remain release gates. The backend serves real offline audits now. Scope the demo to trusted local users. Session creation is anonymous, with bounded ephemeral state. Cross-origin UI development should use a same-origin dev proxy. OCR, final approval/application of revisions, mascot animation and automatic revalidation are outside the shipped backend functionality.

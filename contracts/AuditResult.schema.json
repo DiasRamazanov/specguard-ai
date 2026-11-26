@@ -289,6 +289,25 @@
           ],
           "default": null,
           "title": "Conflict Scenario"
+        },
+        "review_explanation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Review Explanation"
+        },
+        "counterevidence": {
+          "items": {
+            "$ref": "#/$defs/Evidence"
+          },
+          "title": "Counterevidence",
+          "type": "array"
         }
       },
       "required": [
@@ -688,19 +707,52 @@
           "title": "Prompt Version"
         },
         "input_tokens": {
-          "default": 0,
-          "title": "Input Tokens",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Input Tokens"
         },
         "reasoning_tokens": {
-          "default": 0,
-          "title": "Reasoning Tokens",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reasoning Tokens"
         },
         "output_tokens": {
-          "default": 0,
-          "title": "Output Tokens",
-          "type": "integer"
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Output Tokens"
+        },
+        "attempt": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Attempt"
         },
         "latency_ms": {
           "anyOf": [

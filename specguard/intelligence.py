@@ -533,7 +533,12 @@ def _verify(role, context, blocks, ids, finding_ids, output):
             require(set(change.requirement_ids) <= ids, "unknown_requirement")
             require(set(change.related_finding_ids) <= finding_ids, "unknown_finding")
             if change.kind in {"changed", "contradiction", "conflicting_constraint", "match"}:
-                require(len({c.document_id for c in change.evidence}) >= 2, "missing_comparison_source")
+                quoted = {c.document_id for c in change.evidence if c.kind == "quote" and c.quote}
+                require(
+                    context.primary_document_id in quoted
+                    and quoted.intersection(context.supplementary_document_ids),
+                    "missing_comparison_source",
+                )
             if change.alignment == "exact" and change.kind == "match":
                 quotes = [c.quote for c in change.evidence]
                 require(quotes[0] is not None and len(set(quotes)) == 1, "inexact_match")

@@ -279,6 +279,25 @@
       ],
       "default": null,
       "title": "Conflict Scenario"
+    },
+    "review_explanation": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Review Explanation"
+    },
+    "counterevidence": {
+      "items": {
+        "$ref": "#/$defs/Evidence"
+      },
+      "title": "Counterevidence",
+      "type": "array"
     }
   },
   "required": [

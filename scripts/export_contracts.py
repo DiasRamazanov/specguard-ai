@@ -1,4 +1,5 @@
 """Export frontend contracts from the same models used by the API."""
+
 import json
 from pathlib import Path
 
@@ -16,8 +17,17 @@ def write(name, content):
 def main():
     ROOT.mkdir(exist_ok=True)
     write("openapi.json", app.openapi())
-    for cls in (AuditResult, Evidence, Finding, Requirement, Attachment, CopilotRequest,
-                CopilotResponse, ErrorResponse, Event):
+    for cls in (
+        AuditResult,
+        Evidence,
+        Finding,
+        Requirement,
+        Attachment,
+        CopilotRequest,
+        CopilotResponse,
+        ErrorResponse,
+        Event,
+    ):
         write(cls.__name__ + ".schema.json", cls.model_json_schema())
 
 

@@ -1,17 +1,30 @@
 """Wire types for sessions, progress polling and evidence navigation."""
+
 from datetime import datetime
 from typing import Literal
 
-from pydantic import Field
+from pydantic import Field, StrictBool
 
 from .models import DocumentMetadata, Evidence, Record
 
 Mode = Literal["offline", "live"]
 Purpose = Literal["context", "comparison", "revision"]
-Stage = Literal["document_received", "extracting", "validating_individual", "validating_global",
-                "contradiction_detected", "verifying_evidence", "generating_report", "completed",
-                "failed", "attachment_received", "attachment_reading", "comparing_documents",
-                "copilot_thinking", "copilot_response_completed"]
+Stage = Literal[
+    "document_received",
+    "extracting",
+    "validating_individual",
+    "validating_global",
+    "contradiction_detected",
+    "verifying_evidence",
+    "generating_report",
+    "completed",
+    "failed",
+    "attachment_received",
+    "attachment_reading",
+    "comparing_documents",
+    "copilot_thinking",
+    "copilot_response_completed",
+]
 
 
 class ErrorResponse(Record):
@@ -26,7 +39,7 @@ class SessionTicket(Record):
 class AuditRequest(Record):
     document_ids: list[str] = Field(min_length=1, max_length=4)
     mode: Mode = "offline"
-    allow_external_processing: bool = False
+    allow_external_processing: StrictBool = False
 
 
 class Event(Record):
@@ -56,7 +69,7 @@ class CopilotRequest(Record):
     finding_id: str | None = None
     attachment_ids: list[str] = Field(default_factory=list, max_length=4)
     mode: Mode = "offline"
-    allow_external_processing: bool = False
+    allow_external_processing: StrictBool = False
 
 
 class CopilotResponse(Record):
@@ -72,7 +85,7 @@ class RevisionRequest(Record):
     requirement_id: str
     finding_id: str
     approved_assumptions: list[str] = Field(default_factory=list, max_length=12)
-    allow_external_processing: bool = False
+    allow_external_processing: StrictBool = False
 
 
 class RevisionDraft(Record):
@@ -85,3 +98,26 @@ class RevisionDraft(Record):
     decisions: list[str]
     acceptance_tests: list[str]
     requires_human_approval: Literal[True]
+
+
+class ComparisonRequest(Record):
+    primary_document_id: str
+    attachment_ids: list[str] = Field(min_length=1, max_length=4)
+    purpose: str = Field(min_length=1, max_length=1000)
+    allow_external_processing: StrictBool = False
+
+
+class ComparisonChange(Record):
+    kind: str
+    alignment: str
+    description: str
+    evidence: list[Evidence]
+    requirement_ids: list[str]
+    related_finding_ids: list[str]
+    uncertainty: str
+
+
+class ComparisonResult(Record):
+    relationship: str
+    changes: list[ComparisonChange]
+    questions: list[str]

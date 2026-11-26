@@ -89,6 +89,8 @@ class Finding(Record):
     recommendation: str
     uncertainty: Optional[str] = None
     conflict_scenario: Optional[str] = None
+    review_explanation: Optional[str] = None
+    counterevidence: List[Evidence] = Field(default_factory=list)
 
 
 class RejectedCandidate(Record):
@@ -145,9 +147,10 @@ class UsageRecord(Record):
     role: str
     model: Optional[str] = None
     prompt_version: Optional[str] = None
-    input_tokens: int = 0
-    reasoning_tokens: int = 0
-    output_tokens: int = 0
+    input_tokens: Optional[int] = None
+    reasoning_tokens: Optional[int] = None
+    output_tokens: Optional[int] = None
+    attempt: Optional[int] = None
     latency_ms: Optional[int] = None
     status: Optional[str] = None
 
