@@ -184,3 +184,36 @@ test('@mobile explicit Copilot control opens the panel', async ({ page }) => {
   await page.getByRole('button', { name: 'Закрыть Copilot' }).click()
   await expect(copilot(page)).toHaveAttribute('data-open', 'no')
 })
+
+for (const device of ['desktop', '@mobile']) {
+  test(`demo onboarding runs one real offline audit on ${device}`, async ({ page }) => {
+    const jobs: unknown[] = []
+    page.on('request', request => {
+      if (request.method() === 'POST' && new URL(request.url()).pathname === '/api/audits') {
+        jobs.push(request.postDataJSON())
+      }
+    })
+    await page.goto('/')
+    const liveMode = page.getByRole('radio', { name: /DeepSeek/ })
+    if (process.env.SPECGUARD_TEST_URL || process.env.VITE_PUBLIC_DEMO === '1') {
+      await expect(liveMode).toBeDisabled()
+      await expect(page.getByText(/В публичной версии DeepSeek недоступен/).first()).toBeVisible()
+    } else {
+      await liveMode.check()
+      await page.getByRole('checkbox', { name: /Разрешаю отправить/ }).check()
+    }
+    const button = page.getByRole('button', { name: 'Запустить демо-анализ' })
+    await expect(button).toHaveAccessibleDescription(/синтетического ТЗ/)
+    const result = page.waitForResponse(r => r.url().endsWith('/result') && r.ok())
+    await button.evaluate((b: HTMLButtonElement) => { b.click(); b.click() })
+    await expect(page.getByRole('heading', { name: 'Результаты аудита' })).toBeVisible()
+    const audit = await (await result).json()
+    expect(jobs).toEqual([{ document_ids: [audit.documents[0].document_id], mode: 'offline', allow_external_processing: false }])
+    for (const name of ['Обзор', 'Требования', 'Замечания', 'Противоречия', 'Отчёт']) {
+      await expect(page.getByRole('navigation').getByRole('button', { name: new RegExp(name) })).toBeEnabled()
+    }
+    expect(audit.documents).toHaveLength(1)
+    expect(audit.documents[0].filename).toContain('Синтетическое ТЗ')
+    expect(audit.findings.map((f: { kind: string }) => f.kind)).toEqual(expect.arrayContaining(['contradiction', 'state_changing_get']))
+  })
+}
