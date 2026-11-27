@@ -29,7 +29,8 @@ export interface AuditController {
   addFiles: (files: FileList | File[]) => void
   removeDocument: (localId: string) => void
   retryDocument: (localId: string) => void
-  start: () => Promise<void>
+  starting: boolean
+  start: (demoFile?: File) => Promise<void>
   newAudit: () => void
   /** Explicit revalidation: audits a new revision as a separate audit; the original is untouched. */
   revalidate: (file: File) => Promise<void>
@@ -62,6 +63,8 @@ export function useAudit(
   const hooksRef = useRef(hooks)
   hooksRef.current = hooks
   const generation = useRef(0)
+  const startLock = useRef(false)
+  const [starting, setStarting] = useState(false)
 
   const docsRef = useRef<LocalDocument[]>([])
   const commit = useCallback((next: LocalDocument[]) => {
@@ -136,17 +139,25 @@ export function useAudit(
     [commit, upload],
   )
 
-  const start = useCallback(async () => {
+  const start = useCallback(async (demoFile?: File) => {
     const ids = documents.filter((d) => d.state === 'ready' && d.meta).map((d) => d.meta!.document_id)
-    if (!ids.length) return
+    if (startLock.current || (!demoFile && !ids.length)) return
+    startLock.current = true
+    setStarting(true)
     setError(null)
     try {
       await ensureSession()
+      const auditMode = demoFile ? 'offline' : mode
+      const documentIds = demoFile ? [(await client.uploadDocument(demoFile, demoFile.name)).document_id] : ids
       const st = await client.startAudit({
-        document_ids: ids,
-        mode,
-        allow_external_processing: mode === 'live' ? consent : false,
+        document_ids: documentIds,
+        mode: auditMode,
+        allow_external_processing: auditMode === 'live' && consent,
       })
+      if (demoFile) {
+        setMode('offline')
+        setConsent(false)
+      }
       setAuditId(st.audit_id)
       setStatus(st)
       setResult(null)
@@ -154,6 +165,9 @@ export function useAudit(
       hooksRef.current.onEvents(st.audit_id, st.events)
     } catch (err) {
       fail(err)
+    } finally {
+      startLock.current = false
+      setStarting(false)
     }
   }, [client, consent, documents, ensureSession, fail, mode])
 
@@ -266,6 +280,7 @@ export function useAudit(
     addFiles,
     removeDocument,
     retryDocument,
+    starting,
     start,
     newAudit,
     revalidate,

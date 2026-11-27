@@ -1,3 +1,5 @@
+import { publicDemo, publicModeNotice } from '../publicDemo'
+import { demoSpecification } from './demoSpecification'
 import { useRef, useState } from 'react'
 import { ACCEPT_ATTRIBUTE } from '../api/client'
 import { Icon } from '../components/Icons'
@@ -45,6 +47,11 @@ export function SetupView({ audit }: { audit: AuditController }) {
             Автоматический аудит требований по ISO/IEC/IEEE 29148 для FinTech-проектов: находим противоречия, пропуски и риски до начала
             разработки. Каждое замечание подкреплено цитатой из документа.
           </p>
+          <button type="button" className="btn btn-secondary" style={{ marginTop: 16 }} disabled={audit.starting}
+            aria-describedby="demo-description" onClick={() => void audit.start(demoSpecification())}>
+            Запустить демо-анализ
+          </button>
+          <p id="demo-description" className="small muted">Офлайн-проверка синтетического ТЗ о выдаче наличных.</p>
           <div className="features">
             <span className="feature"><Icon name="bolt" size={24} /> Автоматический<br />анализ</span>
             <span className="feature"><Icon name="layers" size={24} /> Аргументированные<br />находки</span>
@@ -166,10 +173,10 @@ export function SetupView({ audit }: { audit: AuditController }) {
                   </span>
                 </label>
                 <label className="mode-option">
-                  <input type="radio" name="mode" checked={audit.mode === 'live'} onChange={() => audit.setMode('live')} />
+                  <input type="radio" name="mode" disabled={publicDemo} checked={audit.mode === 'live'} onChange={() => audit.setMode('live')} />
                   <span>
                     <b>DeepSeek</b>
-                    <span className="small muted" style={{ display: 'block' }}>Семантический анализ, нужен ключ на сервере</span>
+                    <span className="small muted" style={{ display: 'block' }}>{publicDemo ? publicModeNotice : 'Семантический анализ, нужен ключ на сервере'}</span>
                   </span>
                 </label>
               </div>
@@ -189,7 +196,7 @@ export function SetupView({ audit }: { audit: AuditController }) {
               </div>
             )}
 
-            <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: 16, padding: '12px 16px' }} disabled={!canStart} aria-describedby={canStart ? undefined : 'start-help'} onClick={() => void audit.start()}>
+            <button type="button" className="btn btn-primary" style={{ width: '100%', marginTop: 16, padding: '12px 16px' }} disabled={!canStart || audit.starting} aria-describedby={canStart ? undefined : 'start-help'} onClick={() => void audit.start()}>
               Начать анализ <Icon name="arrow" size={16} />
             </button>
             {!canStart && (

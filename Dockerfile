@@ -4,7 +4,7 @@ COPY contracts/ /build/contracts/
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY frontend/ ./
-RUN npm run build
+RUN VITE_PUBLIC_DEMO=1 npm run build
 
 FROM python:3.12-slim-bookworm AS python-build
 WORKDIR /build

@@ -1,3 +1,4 @@
+import { publicDemo, publicModeNotice } from '../publicDemo'
 // SPEC Copilot: right-side panel (SPEC 4.2). Evidence-grounded answers from
 // POST /audits/{id}/copilot, approval-only revision drafts, document comparison and
 // multi-file attachments. Nothing here alters the original audit.
@@ -127,7 +128,7 @@ export const CopilotPanel = forwardRef<CopilotHandle, Props>(function CopilotPan
   const liveOnly = (what: string) => {
     push({
       role: 'error',
-      text: `${what} выполняет модель DeepSeek. Переключите режим внизу панели на «DeepSeek» и подтвердите согласие на отправку текста. В офлайн-режиме доступны поиск по источникам и навигация по замечаниям.`,
+      text: publicDemo ? publicModeNotice : `${what} выполняет модель DeepSeek. Переключите режим внизу панели на «DeepSeek» и подтвердите согласие на отправку текста. В офлайн-режиме доступны поиск по источникам и навигация по замечаниям.`,
     })
   }
 
@@ -380,7 +381,7 @@ export const CopilotPanel = forwardRef<CopilotHandle, Props>(function CopilotPan
           <input type="radio" name="copilot-mode" checked={mode === 'offline'} onChange={() => setMode('offline')} /> Офлайн
         </label>
         <label>
-          <input type="radio" name="copilot-mode" checked={mode === 'live'} onChange={() => setMode('live')} /> DeepSeek
+          <input type="radio" name="copilot-mode" disabled={publicDemo} checked={mode === 'live'} onChange={() => setMode('live')} /> DeepSeek
         </label>
         {live && (
           <label className="consent-inline">
@@ -388,7 +389,7 @@ export const CopilotPanel = forwardRef<CopilotHandle, Props>(function CopilotPan
           </label>
         )}
         <span className="mode-note">
-          {live ? 'Ответы модели DeepSeek с проверкой цитат' : 'Офлайн: поиск фрагментов по источникам, без модели'}
+          {publicDemo ? publicModeNotice : live ? 'Ответы модели DeepSeek с проверкой цитат' : 'Офлайн: поиск фрагментов по источникам, без модели'}
         </span>
       </footer>
     </aside>
